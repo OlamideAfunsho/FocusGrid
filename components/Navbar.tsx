@@ -3,9 +3,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
-import logo from '../public/images/landing-page images/focus-grid-logo.png'
-import hamburgerMenu from '../public/images/landing-page images/fries-menu-icon.png'
-import closeMenu from '../public/images/landing-page images/close-menu-icon.svg'
+import logo from '../public/images/landing-page-images/focus-grid-logo.png'
+import hamburgerMenu from '../public/images/landing-page-images/fries-menu-icon.png'
+import closeMenu from '../public/images/landing-page-images/close-menu-icon.svg'
 
 // const Navbar = () => {
 //   return (
@@ -48,8 +48,8 @@ const Navbar = () => {
 
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2">
-                    <Image src={logo} alt="FocusGrid Logo" width={50} height={50} />
-                    <h1 className={`font-bold text-[24px] ${isScrolled ? "text-gray-700" : "text-white"}`}>FocusGrid</h1>
+                    <Image src={logo} alt="FocusGrid Logo" className='w-[30px] h-[30px] sm:w-[50px] sm:h-[50px]' />
+                    <h1 className={`font-bold text-[18px] sm:text-[24px] ${isScrolled ? "text-gray-700" : "text-white"}`}>FocusGrid</h1>
                 </Link>
 
                 {/* Desktop Nav */}
@@ -83,8 +83,8 @@ const Navbar = () => {
                 </div>
 
                 {/* Mobile Menu */}
-                <div className={`fixed top-0 left-0 w-full h-screen bg-white text-base flex flex-col md:hidden items-center justify-center gap-6 font-medium text-gray-800 transition-all duration-500 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-                    <button className="absolute top-8 right-4" onClick={() => setIsMenuOpen(false)}>
+                <div className={`fixed top-0 left-0 w-full h-screen bg-white/10 backdrop-blur-sm text-base flex flex-col md:hidden items-center justify-center gap-6 font-medium text-gray-800 transition-all duration-500 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
+                    <button className="absolute top-5 sm:top-8 right-4" onClick={() => setIsMenuOpen(false)}>
                         <Image src={closeMenu} alt="Close Menu" width={20} height={20} />
                     </button>
 
