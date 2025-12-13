@@ -39,7 +39,7 @@ const Features = () => {
     <div id='features' className='text-center pt-40 md:pt-20 pb-30 md:pb-20 px-8 bg-[#e6f2ff] mask-fade-top-and-bottom'>
         <span className='text-[#3399ff] font-bold border border-[#3399ff] px-6 py-2.5 rounded-full'>Features</span>
 
-        <p className='mt-4 text-[20px] text-[#4a5565] w-full sm:w-2/3 mx-auto'>
+        <p className='mt-8 text-[20px] text-[#4a5565] w-full sm:w-2/3 mx-auto'>
            Boost your productivity and focus with <span className='font-semibold'>FocusGrid</span> - the ultimate study companion.
             {/* <span className='font-semibold'>FocusGrid</span> helps you create a distraction-free study environment by breaking your tasks into manageable intervals,
             allowing you to stay focused and achieve your academic goals with ease. */}
