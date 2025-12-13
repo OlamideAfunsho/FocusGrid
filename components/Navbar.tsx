@@ -21,7 +21,7 @@ import closeMenu from '../public/images/landing-page-images/close-menu-icon.svg'
 const Navbar = () => {
     const navLinks = [
         { name: 'Home', href: '/' },
-        { name: 'Features', href: '/' },
+        { name: 'Features', href: '#features' },
         { name: 'How it works', href: '/' },
         { name: 'Testimonials', href: '/' },
     ];
@@ -42,7 +42,7 @@ const Navbar = () => {
     }, []);
 
     return (
-        <div ref={ref} className="h-full overflow-y-scroll">
+        <div ref={ref} className=" overflow-y-scroll">
             
             <div className={`fixed top-0 left-0 bg-[#3399ff]  w-full flex items-center justify-between px-4 md:px-8 lg:px-24 xl:px-32 transition-all duration-500 z-50 ${isScrolled ? "bg-white/80 shadow-md text-gray-700 backdrop-blur-lg py-3 md:py-4" : "py-4 md:py-6"}`}>
 

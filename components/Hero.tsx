@@ -10,9 +10,9 @@ const Hero = () => {
     <div className="hero-section mt-30 px-8 text-center py-16 sm:py-24 lg:py-32">
         <h1 className={`${inter.className} text-4xl/10 sm:text-6xl/18 font-semibold text-center`}>Your Space <br /> <span className='text-[#3399ff]'>To Study Smarter</span></h1>
         <p className='text-center  w-full sm:w-1/2 mx-auto mt-2 text-lg text-[#4a5565]'>
-            Boost your productivity and focus with <span className='font-semibold'>FocusGrid</span> - the ultimate study companion.
-            {/* FocusGrid helps you create a distraction-free study environment by breaking your tasks into manageable intervals,
-            allowing you to stay focused and achieve your academic goals with ease. */}
+            {/* Boost your productivity and focus with <span className='font-semibold'>FocusGrid</span> - the ultimate study companion. */}
+            <span className='font-semibold'>FocusGrid</span> is your all-in-one space to organize courses, manage tasks, and track study time—so you can study smarter, not harder.
+            
         </p>
 
         <div className='flex flex-col sm:flex-row gap-2 justify-center mt-8'>

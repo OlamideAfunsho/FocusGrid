@@ -30,5 +30,22 @@
   
 } */
 
+.mask-fade-top-and-bottom {
+  mask-image: 
+    linear-gradient(
+      to bottom, 
+      transparent,      /* Start: Fully transparent (top) */
+      black 10%,         /* Fade in: Solid black from 10% */
+      black 90%,         /* Fade out: Solid black up to 90% */
+      transparent       /* End: Fully transparent (bottom) */
+    );
 
-
+  -webkit-mask-image: 
+    linear-gradient(
+      to bottom, 
+      transparent,
+      black 10%, 
+      black 90%, 
+      transparent
+    );
+}
