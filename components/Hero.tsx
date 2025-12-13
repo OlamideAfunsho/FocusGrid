@@ -1,28 +1,42 @@
-import { inter } from '@/app/font'
-import Image from 'next/image'
-import React from 'react'
-// import heroImage from '../public/images/landing-page-images/he'
-import playIcon from '../public/images/landing-page-images/play-button-icon.png'
+import { inter } from "@/app/font";
+import Image from "next/image";
+import React from "react";
+import heroImage from "../public/images/landing-page-images/hero-image.jpg";
+import playIcon from "../public/images/landing-page-images/play-button-icon.png";
 
 const Hero = () => {
   return (
     <>
-    <div className="hero-section mt-30 px-8 text-center py-16 sm:py-24 lg:py-32">
-        <h1 className={`${inter.className} text-4xl/10 sm:text-6xl/18 font-semibold text-center`}>Your Space <br /> <span className='text-[#3399ff]'>To Study Smarter</span></h1>
-        <p className='text-center  w-full sm:w-1/2 mx-auto mt-2 text-lg text-[#4a5565]'>
+      <div className="hero-section flex flex-col lg:flex-row mt-40 mb-20 items-center justify-around px-8 sm:px-16 lg:px-32 gap-10">
+        <div>
+          <h1
+            className={`${inter.className} text-4xl/10 sm:text-6xl/18 font-semibold text-center`}
+          >
+            Your Space <br />{" "}
+            <span className="text-[#3399ff]">To Study Smarter</span>
+          </h1>
+          <p className="text-center  w-full sm:w-1/2 mx-auto mt-2 text-lg text-[#4a5565]">
             {/* Boost your productivity and focus with <span className='font-semibold'>FocusGrid</span> - the ultimate study companion. */}
-            <span className='font-semibold'>FocusGrid</span> is your all-in-one space to organize courses, manage tasks, and track study time—so you can study smarter, not harder.
-            
-        </p>
+            <span className="font-semibold">FocusGrid</span> is your all-in-one
+            space to organize courses, manage tasks, and track study time—so you
+            can study smarter, not harder.
+          </p>
 
-        <div className='flex flex-col sm:flex-row gap-2 justify-center mt-8'>
-            <button className='bg-[#3399ff] text-white px-10 py-3 sm:py-2.5 rounded-full shadow-[inset_0px_4px_11.2px_0px_#FAFAFAA1]'>Get Started</button>
-            <button className='flex gap-1 items-center justify-center border border-[#3399ff] text-[#3399ff] px-6 py-2.5 rounded-full'><Image src={playIcon} alt='play-button-icon' width={30}/> Watch Demo</button>
+          <div className="flex flex-col sm:flex-row gap-2 justify-center mt-8">
+            <button className="bg-[#3399ff] text-white px-10 py-3 sm:py-2.5 rounded-full shadow-[inset_0px_4px_11.2px_0px_#FAFAFAA1]">
+              Get Started
+            </button>
+            <button className="flex gap-1 items-center justify-center border border-[#3399ff] text-[#3399ff] px-6 py-2.5 rounded-full">
+              <Image src={playIcon} alt="play-button-icon" width={30} /> Watch
+              Demo
+            </button>
+          </div>
         </div>
-        
-    </div>
-    </>
-  )
-}
 
-export default Hero
+        <Image src={heroImage} alt="hero-image" className="sm:w-full md:w-1/2 h-[500px] rounded-lg" />
+      </div>
+    </>
+  );
+};
+
+export default Hero;
