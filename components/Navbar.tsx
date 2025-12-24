@@ -3,9 +3,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
-import logo from '../public/images/landing-page-images/focus-grid-logo.png'
-import hamburgerMenu from '../public/images/landing-page-images/fries-menu-icon.png'
-import closeMenu from '../public/images/landing-page-images/close-menu-icon.svg'
+import logo from '../public/images/landing_page_images/logo.svg'
+import hamburgerMenu from '../public/images/landing_page_images/hamburger-menu.png'
+import closeMenu from '../public/images/landing_page_images/close-menu.svg'
 
 // const Navbar = () => {
 //   return (
@@ -24,67 +24,63 @@ const Navbar = () => {
         { name: 'Features', href: '#features' },
         { name: 'How it works', href: '/' },
         { name: 'Testimonials', href: '/' },
+        { name: 'Pricing', href: '/' },
+        { name: 'FAQs', href: '/' },
     ];
 
-    const ref = useRef<HTMLDivElement>(null)
-
-    const [isScrolled, setIsScrolled] = useState(false);
+    
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            if (ref.current) {
-                setIsScrolled(ref.current.scrollTop > 10);
-            }
-        };
-        ref.current?.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+    
 
     return (
-        <div ref={ref} className=" overflow-y-scroll">
+        <div className=" overflow-y-scroll">
             
-            <div className={`fixed top-0 left-0 bg-[#3399ff]  w-full flex items-center justify-between px-4 md:px-8 lg:px-24 xl:px-32 transition-all duration-500 z-50 ${isScrolled ? "bg-white/80 shadow-md text-gray-700 backdrop-blur-lg py-3 md:py-4" : "py-4 md:py-6"}`}>
+            <div className={`fixed top-0 left-0  w-full flex items-center justify-between px-4 md:px-8 lg:px-12 xl:px-[120px] py-5 transition-all duration-500 z-50 `}>
 
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2">
-                    <Image src={logo} alt="FocusGrid Logo" className='w-[30px] h-[30px] sm:w-[50px] sm:h-[50px]' />
-                    <h1 className={`font-bold text-[18px] sm:text-[24px] ${isScrolled ? "text-gray-700" : "text-white"}`}>FocusGrid</h1>
+                    <Image src={logo} alt="FocusGrid Logo" />
+                        <h1 className={`font-semibold text-[18px] sm:text-[24px] text-[#000000] `}>FocusGrid</h1>
                 </Link>
 
                 {/* Desktop Nav */}
-                <div className="hidden md:flex items-center gap-4 lg:gap-8">
+                <div className="hidden lg:flex items-center gap-4 lg:gap-8">
                     {navLinks.map((link, i) => (
-                        <Link key={i} href={link.href} className={`group flex flex-col gap-0.5 md:text-[12px] lg:text-[16px] ${isScrolled ? "text-gray-700" : "text-white"}`}>
+                            <Link key={i} href={link.href} className={`group flex flex-col gap-0.5 lg:text-[14px] xl:text-[16px] text-[#6C7278] font-medium`}>
                             {link.name}
-                            <div className={`${isScrolled ? "bg-gray-700" : "bg-white"} h-0.5 w-0 group-hover:w-full transition-all duration-300`} />
+                            <div className={` h-0.5 w-0 group-hover:w-full transition-all duration-300`} />
                         </Link>
                     ))}
                     
                 </div>
 
                 {/* Desktop Right */}
-                <div className="hidden md:flex items-center gap-4">
+                <div className="flex items-center gap-8">
                     
-                    <button className={`px-6 py-2.5 text-sm rounded-full ml-4 transition-all duration-500 cursor-pointer ${isScrolled ? "text-white bg-black" : "bg-white text-black"} hover:bg-transparent hover:text-white hover:outline`}>
-                        Login
+                    <button className={`hidden lg:block text-[#6C7278] text-[16px] font-medium rounded-full ml-4 transition-all duration-500 cursor-pointer `}>
+                        Sign in
                     </button>
 
-                    <button className={`outline px-6 py-2.5 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} transition-all hover:bg-white hover:text-black hover:outline-transparent`}>
-                        Get started
+                    <button className={`hidden lg:block p-3 text-[16px] text-[#FFFFFF] font-semibold rounded-[8px] cursor-pointer shadow-[0px_7px_9.1px_0px_#C9C9FF9F] bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] `}>
+                        Get started for free
                     </button>
                 </div>
 
                 {/* Mobile Menu Button */}
-                <div className="flex items-center gap-3 md:hidden">
+                <div className="flex items-center gap-8 lg:hidden">
+                    <button className={`hidden sm:block text-[#6C7278] text-[16px] font-medium rounded-full ml-4 transition-all duration-500 cursor-pointer `}>
+                        Sign in
+                    </button>
+
                     <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
                         <Image src={hamburgerMenu} alt="Hamburger Menu" width={20} height={20} />
                     </button>
                 </div>
 
                 {/* Mobile Menu */}
-                <div className={`fixed top-0 left-0 w-full h-screen bg-white/10 backdrop-blur-sm text-base flex flex-col md:hidden items-center justify-center gap-6 font-medium text-gray-800 transition-all duration-500 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-                    <button className="absolute top-5 sm:top-8 right-4" onClick={() => setIsMenuOpen(false)}>
+                <div className={`fixed top-0 left-0 w-full h-screen bg-white/10 backdrop-blur-sm text-base flex flex-col lg:hidden items-center justify-center gap-6 font-medium text-gray-800 transition-all duration-500 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
+                    <button className="absolute top-5 sm:top-8 right-4 md:right-8" onClick={() => setIsMenuOpen(false)}>
                         <Image src={closeMenu} alt="Close Menu" width={20} height={20} />
                     </button>
 
