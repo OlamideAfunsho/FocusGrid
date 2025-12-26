@@ -34,9 +34,9 @@ const Navbar = () => {
     
 
     return (
-        <div className=" overflow-y-scroll">
+        <div className="">
             
-            <div className={`fixed top-0 left-0  w-full flex items-center justify-between px-4 md:px-8 lg:px-12 xl:px-[120px] py-5 transition-all duration-500 z-50 `}>
+            <div className={`h-[69px] md:h-[88px] bg-[#FFFFFF] fixed top-0 left-0 w-full flex items-center justify-between px-4 md:px-8 lg:px-12 xl:px-[120px] z-50 `}>
 
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2">
