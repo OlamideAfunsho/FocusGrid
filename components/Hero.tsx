@@ -24,11 +24,11 @@ const Hero = () => {
             <span className="text-[#3399ff]">Organized</span>
           </h1>
           <p className="w-full mt-2 text-[20px] text-[#6C7278] leading-9 text-center md:text-left">
-            Stop juggling multiple apps and scatterd notes. FocusGrid brings your tasks, assignments, deadlines, and study sessions into one powerful platform designed specifiaclly for students.
+            Stop juggling multiple apps and scatterd notes. FocusGrid brings your tasks, assignments, deadlines, and study sessions into one powerful platform designed specifically for students.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 mt-6">
+          <div className="flex flex-col sm:flex-row justify-center xl:justify-self-start gap-4 mt-6">
             <button className="flex gap-3 items-center justify-center bg-[#3399ff] text-white p-3 rounded-[8px] cursor-pointer shadow-[0px_7px_9.1px_0px_#C9C9FF9F] bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)]">
               <span className="text-[16px] font-semibold ">Start Free trial</span>
               <Image src={arrowRight} alt="arrow-right" width={24} />
@@ -40,7 +40,7 @@ const Hero = () => {
           </div>
 
           {/* Reviews */}
-          <div className="flex gap-1 mt-12 md:mt-[54px]">
+          <div className="flex justify-center xl:justify-self-start gap-1 mt-12 md:mt-[54px] mb-16 md:mb-0">
             <Image src={avatars} alt="group of avatars" />
             <div>
               <Image src={stars} alt="5 stars" />
