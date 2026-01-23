@@ -1,4 +1,3 @@
-import Features from '@/components/Features'
 import Problems from '@/components/Problems'
 import Hero from '@/components/Hero'
 import Navbar from '@/components/Navbar'
@@ -10,7 +9,6 @@ const HomePage = () => {
     <Navbar />
     <Hero />
     <Problems />
-    {/* <Features /> */}
     </>
   )
 }
