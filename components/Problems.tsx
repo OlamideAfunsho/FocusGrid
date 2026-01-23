@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Features1 = () => {
+const Problems = () => {
   return (
     <>
     <div className='grid grid-flow-col grid-rows-2 sm:grid-rows-1 gap-2.5 px-4 py-12 sm:p-12 md:px-[50px] md:py-16 lg:px-[120px]'>
@@ -28,4 +28,4 @@ const Features1 = () => {
   )
 }
 
-export default Features1
+export default Problems
