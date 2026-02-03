@@ -3,6 +3,7 @@ import Hero from '@/components/Hero'
 import Navbar from '@/components/Navbar'
 import React from 'react'
 import Features from '@/components/Features'
+import HowItWorks from '@/components/HowItWorks'
 
 const HomePage = () => {
   return (
@@ -11,6 +12,7 @@ const HomePage = () => {
     <Hero />
     <Problems />
     <Features />
+    <HowItWorks />
     </>
   )
 }
