@@ -36,7 +36,7 @@ const Navbar = () => {
     return (
         <div className="">
             
-            <div className={`h-[69px] md:h-[88px] bg-[#FFFFFF] fixed top-0 left-0 w-full flex items-center justify-between px-4 md:px-8 lg:px-12 xl:px-[120px] z-50 `}>
+            <div className={`h-[69px] md:h-[88px] bg-[#FFFFFF] fixed top-0 left-0 w-full flex items-center justify-between px-4 md:px-8 lg:px-12 xl:px-[120px] z-50 shadow-[0px_17px_29.7px_0px_#D1D8DF]`}>
 
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2">
@@ -73,14 +73,14 @@ const Navbar = () => {
                         Sign in
                     </button>
 
-                    <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                    <button onClick={() => setIsMenuOpen(!isMenuOpen)}className='cursor-pointer'>
                         <Image src={hamburgerMenu} alt="Hamburger Menu" width={20} height={20} />
                     </button>
                 </div>
 
                 {/* Mobile Menu */}
                 <div className={`fixed top-0 left-0 w-full h-screen bg-white/10 backdrop-blur-sm text-base flex flex-col lg:hidden items-center justify-center gap-6 font-medium text-gray-800 transition-all duration-500 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-                    <button className="absolute top-5 sm:top-8 right-4 md:right-8" onClick={() => setIsMenuOpen(false)}>
+                    <button className="absolute top-5 sm:top-8 right-4 md:right-8 cursor-pointer" onClick={() => setIsMenuOpen(false)}>
                         <Image src={closeMenu} alt="Close Menu" width={20} height={20} />
                     </button>
 

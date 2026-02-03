@@ -13,17 +13,17 @@ const Hero = () => {
     <>
       <div className="hero-section bg-[linear-gradient(109.51deg,_#EAF5FF_2.27%,_#F9FAFF_100%)] flex flex-col xl:flex-row mt-10 md:mt-20 pt-20 pb-20 items-center justify-around px-4 sm:px-16 lg:px-32 ">
         <div>
-          <div className="flex items-center gap-2.5 w-[311px] mx-auto md:mx-0 bg-[#FFFFFF] rounded-[30px] p-2.5 mb-6 shadow-[0px_17px_29.7px_0px_#D1D8DF]">
+          <div className="flex items-center gap-2.5 w-[311px] mx-auto xl:mx-0 bg-[#FFFFFF] rounded-[30px] p-2.5 mb-6 shadow-[0px_17px_29.7px_0px_#D1D8DF]">
             <span className="bg-[#08BD4D] w-3 h-3 rounded-full"></span>
             <span className="text-[#6C7278] text-[14px] font-medium">Trusted by 50,000+ students worldwide</span>
           </div>
           <h1
-            className={` text-4xl/10 sm:text-5xl font-bold mb-6 leading-12 md:leading-[60px] text-center md:text-left`}
+            className={` text-4xl/10 sm:text-5xl font-bold mb-6 leading-12 md:leading-[60px] text-center xl:text-left`}
           >
             Your Academic Life, <br />{" "}
             <span className="text-[#3399ff]">Organized</span>
           </h1>
-          <p className="w-full mt-2 text-[20px] text-[#6C7278] leading-9 text-center md:text-left">
+          <p className="w-full mt-2 text-[20px] text-[#6C7278] leading-9 text-center xl:text-left">
             Stop juggling multiple apps and scatterd notes. FocusGrid brings your tasks, assignments, deadlines, and study sessions into one powerful platform designed specifically for students.
           </p>
 
