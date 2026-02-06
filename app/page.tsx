@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar'
 import React from 'react'
 import Features from '@/components/Features'
 import HowItWorks from '@/components/HowItWorks'
+import Testimonials from '@/components/Testimonials'
 
 const HomePage = () => {
   return (
@@ -13,6 +14,7 @@ const HomePage = () => {
     <Problems />
     <Features />
     <HowItWorks />
+    <Testimonials />
     </>
   )
 }

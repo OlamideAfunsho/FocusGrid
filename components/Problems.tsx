@@ -43,7 +43,7 @@ const Problems = () => {
 
         {/* Problems cons */}
         <div className="flex flex-wrap justify-center gap-6 mt-12 lg:mt-16">
-            <div className='bg-[#FFFFFF] rounded-[12px] p-6 w-[354px] lg:[384px] shadow-[0px_17px_29.7px_0px_#D1D8DF66]'>
+            <div className='bg-[#FFFFFF] rounded-[12px] p-6 w-[354px] lg:w-[384px] shadow-[0px_17px_29.7px_0px_#D1D8DF66]'>
                 <div className='bg-[#FEE2E2] rounded-[12px] p-4 w-16 mb-4'>
                     <Image src={calendarIcon} alt="calendar-icon" />
                 </div>
@@ -51,7 +51,7 @@ const Problems = () => {
                 <p className='text-[16px] lg:text-[20px] leading-7 lg:leading-9 text-[#6C7278]'>Juggling assignments across multiple courses leads to forgotten deadlines and last-minute panic. You need a system that tracks everything in one place.</p>
             </div>
 
-            <div className='bg-[#FFFFFF] rounded-[12px] p-6 w-[354px] lg:[384px] shadow-[0px_17px_29.7px_0px_#D1D8DF66]'>
+            <div className='bg-[#FFFFFF] rounded-[12px] p-6 w-[354px] lg:w-[384px] shadow-[0px_17px_29.7px_0px_#D1D8DF66]'>
                 <div className='bg-[#FFFFC8] rounded-[12px] p-4 w-16 mb-4'>
                     <Image src={folderIcon} alt="folder-icon" />
                 </div>
@@ -59,7 +59,7 @@ const Problems = () => {
                 <p className='text-[16px] lg:text-[20px] leading-7 lg:leading-9 text-[#6C7278]'>Notes in one app, tasks in another, study materials somewhere else. Finding what you need becomes a treasure hunt when you should be studying.</p>
             </div>
 
-            <div className='bg-[#FFFFFF] rounded-[12px] p-6 w-[354px] lg:[384px] shadow-[0px_17px_29.7px_0px_#D1D8DF66]'>
+            <div className='bg-[#FFFFFF] rounded-[12px] p-6 w-[354px] lg:w-[384px] shadow-[0px_17px_29.7px_0px_#D1D8DF66]'>
                 <div className='bg-[#E0FFEC] rounded-[12px] p-4 w-16 mb-4'>
                     <Image src={userGroupIcon} alt="user-group-icon" />
                 </div>
