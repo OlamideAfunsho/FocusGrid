@@ -1,5 +1,6 @@
 "use client"
 import React from 'react'
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import quoteIcon from '../public/images/landing_page_images/quote-icon.svg';
 
@@ -13,10 +14,10 @@ const Testimonials = () => {
         { id: 5, date: "Feb 27, 2026", text: 'The analytics feature helps me see where I’m spending my time. I’ve optimized my study schedule and have more free time than ever. Plus, the interface is gorgeous!', name: "Afunsho Olamide", role: "Software Engineering, MIT", img: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200" }
     ];
 
-    const [currentIndex, setCurrentIndex] = React.useState(0);
-    const [isMobile, setIsMobile] = React.useState(window.innerWidth < 768);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth < 768);
         };
@@ -32,7 +33,7 @@ const Testimonials = () => {
         setCurrentIndex((prev) => prev - 3 < 0 ? Math.max(testimonials.length - 3, 0) : prev - 3);
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!isMobile) return;
 
         const interval = setInterval(() => {
@@ -66,10 +67,10 @@ const Testimonials = () => {
 
                     <div className='hidden md:flex justify-end gap-2'>
                         <div onClick={handlePrev} className='h-10 w-10 rounded-lg  border flex items-center justify-center cursor-pointer bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] text-white'>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-arrow-left-icon lucide-arrow-left"><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-left-icon lucide-arrow-left"><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></svg>
                         </div>
                         <div onClick={handleNext} className='h-10 w-10 rounded-lg  border flex items-center justify-center cursor-pointer bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] text-white'>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-arrow-right-icon lucide-arrow-right"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right-icon lucide-arrow-right"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
                         </div>
                     </div>
 
