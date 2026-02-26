@@ -166,7 +166,7 @@ const Testimonials = () => {
               .map((item) => (
                 <div
                   key={item.id}
-                  className="bg-[#FFFFFF] hover:-translate-y-1 transition duration-300 shadow-[0px_17px_29.7px_0px_#D1D8DF] rounded-2xl p-6 space-y-6"
+                  className="bg-[#FFFFFF] flex flex-col justify-around hover:-translate-y-1 transition duration-300 shadow-[0px_17px_29.7px_0px_#D1D8DF] rounded-2xl p-6 space-y-6"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex">
