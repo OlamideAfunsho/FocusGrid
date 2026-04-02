@@ -5,6 +5,7 @@ import React from 'react'
 import Features from '@/components/Features'
 import HowItWorks from '@/components/HowItWorks'
 import Testimonials from '@/components/Testimonials'
+import Pricing from '@/components/Pricing'
 
 const HomePage = () => {
   return (
@@ -15,6 +16,7 @@ const HomePage = () => {
     <Features />
     <HowItWorks />
     <Testimonials />
+    <Pricing />
     </>
   )
 }

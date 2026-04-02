@@ -18,9 +18,9 @@ const Testimonials = () => {
       id: 2,
       date: "Nov 22, 2025",
       text: "The Pomodoro timer integration is perfect. I’ve doubled my productive study hours and my grades have never been better. This app is a game-changer for any serious student.",
-      name: "Jessica Taylor",
-      role: "Psychology, Yale",
-      img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200",
+      name: "Owolabi Kolade",
+      role: "Philosophy, Yale",
+      img: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200",
     },
     {
       id: 3,
@@ -36,7 +36,7 @@ const Testimonials = () => {
       text: "I was drowning in scattered notes and missed assignments before FocusGrid. Now everything is organized by course, and I can actually focus on learning instead of scrambling to remember what’s due.",
       name: "Dayo Omojuola",
       role: "Data Science, Harvard",
-      img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200",
+      img: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200",
     },
     {
       id: 5,
