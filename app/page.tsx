@@ -6,6 +6,7 @@ import Features from '@/components/Features'
 import HowItWorks from '@/components/HowItWorks'
 import Testimonials from '@/components/Testimonials'
 import Pricing from '@/components/Pricing'
+import FAQs from '@/components/FAQs'
 
 const HomePage = () => {
   return (
@@ -17,6 +18,7 @@ const HomePage = () => {
     <HowItWorks />
     <Testimonials />
     <Pricing />
+    <FAQs />
     </>
   )
 }
