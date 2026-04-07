@@ -51,8 +51,8 @@ const FAQs = () => {
 
             <div className='w-full mt-12 flex flex-col gap-4 items-start text-left'>
                 {faqData.map((faq, index) => (
-                    <div key={index} className='flex flex-col items-start w-full bg-gradient-to-r from-indigo-50 to-white border border-indigo-100 p-4 sm:p-6 rounded cursor-pointer' onClick={() => setOpenIndex(openIndex === index ? null : index)}>
-                        <div className='flex items-center justify-between w-full'>
+                    <div key={index} className='flex flex-col items-start w-full bg-gradient-to-r from-indigo-50 to-white border border-indigo-100 p-4 sm:p-6 rounded cursor-pointer'>
+                        <div className='flex items-center justify-between w-full' onClick={() => setOpenIndex(openIndex === index ? null : index)}>
                             <h2 className="text-[16px] md:text-[20px] font-semibold text-[#000000]">{faq.question}</h2>
                             <Image src={arrowIcon} alt="Arrow" className={`${openIndex === index ? "rotate-90" : ""} transition-all duration-500 ease-in-out`}/>
                         </div>
