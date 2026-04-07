@@ -7,6 +7,8 @@ import HowItWorks from '@/components/HowItWorks'
 import Testimonials from '@/components/Testimonials'
 import Pricing from '@/components/Pricing'
 import FAQs from '@/components/FAQs'
+import SubFooter from '@/components/SubFooter'
+import Footer from '@/components/Footer'
 
 const HomePage = () => {
   return (
@@ -19,6 +21,8 @@ const HomePage = () => {
     <Testimonials />
     <Pricing />
     <FAQs />
+    <SubFooter />
+    <Footer />
     </>
   )
 }

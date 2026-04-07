@@ -41,13 +41,13 @@ const Navbar = () => {
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2">
                     <Image src={logo} alt="FocusGrid Logo" />
-                        <h1 className={`font-semibold text-[18px] sm:text-[24px] text-[#000000] `}>FocusGrid</h1>
+                    <h1 className={`font-semibold text-[18px] sm:text-[24px] text-[#000000] `}>FocusGrid</h1>
                 </Link>
 
                 {/* Desktop Nav */}
                 <div className="hidden lg:flex items-center gap-4 lg:gap-8">
                     {navLinks.map((link, i) => (
-                            <Link key={i} href={link.href} className={`group flex flex-col gap-0.5 lg:text-[14px] xl:text-[16px] text-[#6C7278] font-medium`}>
+                            <Link key={i} href={link.href} className={`group flex flex-col gap-0.5 lg:text-[14px] xl:text-[16px] text-[#6C7278] font-medium hover:text-[#3399FF] transition-all duration-300 cursor-pointer `}>
                             {link.name}
                             <div className={` h-0.5 w-0 group-hover:w-full transition-all duration-300`} />
                         </Link>
