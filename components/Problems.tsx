@@ -39,7 +39,7 @@ const Problems = () => {
         </div>
 
         <h1 className='text-2xl sm:text-[32px] lg:text-4xl font-bold text-[#000000] leading-9 sm:leading-[60px] mt-8 mb-1 text-center'>Drowning in Academic Chaos?</h1>
-        <p className='text-[#6C7278] text-[16px] lg:text-[20px] leading-9 w-full xl:w-1/2 mx-auto text-center'>Generic task app weren’t built for students. They, don’t understand semesters, courses, group projects, or the unique challenges of academic life.</p>
+        <p className='text-[#6C7278] text-[16px] lg:text-[20px] leading-9 w-full xl:w-1/2 mx-auto text-center'>Generic task apps weren’t built for students. They don’t understand semesters, courses, group projects, or the unique challenges of academic life.</p>
 
         {/* Problems cons */}
         <div className="flex flex-wrap justify-center gap-6 mt-12 lg:mt-16">

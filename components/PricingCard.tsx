@@ -56,7 +56,7 @@ const PricingCard = () => {
             align: "start",
             loop: true,
           }}
-          className="cards-con-mobile w-full max-w-sm xl:hidden relative"
+          className="cards-con-mobile w-full max-w-md mx-auto xl:hidden relative"
         >
           <CarouselContent>
             <CarouselItem>

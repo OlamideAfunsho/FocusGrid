@@ -1,11 +1,16 @@
 import React from 'react'
 import Image from 'next/image'
 import logo from '../public/images/landing_page_images/logo.svg'
+import twitterIcon from '../public/images/landing_page_images/twitter-icon.svg'
+import facebookIcon from '../public/images/landing_page_images/facebook-icon.svg'
+import linkedinIcon from '../public/images/landing_page_images/linkedIn-icon.svg'
+import instagramIcon from '../public/images/landing_page_images/instagram-icon.svg'
 
 const Footer = () => {
   return (
     <>
-        <section className='flex flex-col gap-12 md:flex-row justify-between bg-[#111827] px-4 py-12 sm:p-12 lg:px-[120px] lg:py-16'>
+    <section className='bg-[#111827] px-4 py-12 sm:p-12 lg:px-[120px] lg:py-16'>
+        <section className='flex flex-col gap-12 md:flex-row justify-between'>
             <div className='w-3/4 lg:w-2/5'>
                 <div className="flex items-center gap-2">
                     <Image src={logo} alt="FocusGrid Logo" />
@@ -44,6 +49,26 @@ const Footer = () => {
                 </ul>
             </div>
         </section>
+
+        <div className='flex gap-4 mt-6'>
+            <Image src={twitterIcon} alt="Twitter" className='cursor-pointer' />
+            <Image src={instagramIcon} alt="Instagram" className='cursor-pointer' />
+            <Image src={linkedinIcon} alt="LinkedIn" className='cursor-pointer' />
+            <Image src={facebookIcon} alt="Facebook" className='cursor-pointer' />
+        </div>
+
+        <div className='flex gap-1 flex-col sm:flex-row justify-between sm:items-center border-t-2 pt-4 border-[#D9D8D80D] mt-12'>
+            <p className='text-[14px] text-[#8795A3]'>&copy; 2026 FocusGrid. All rights reserved.</p>
+            <div>
+                <span className='text-[14px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Privacy Policy</span>
+                <span className='mx-1 text-[14px] text-[#8795A3]'>|</span>
+                <span className='text-[14px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Terms of Service</span>
+                <span className='mx-1 text-[14px] text-[#8795A3]'>|</span>
+                <span className='text-[14px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Cookies Policy</span>
+            </div>
+        </div>
+    </section>
+        
     </>
   )
 }
