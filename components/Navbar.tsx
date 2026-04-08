@@ -106,7 +106,7 @@ const Navbar = () => {
                         initial={{ x: "100%" }}
                         animate={{ x: 0 }}
                         exit={{ x: "100%" }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }} 
+                        transition={{ duration: 0.5, ease: "easeInOut" }} 
                     className={`fixed top-0 left-0 w-full h-screen bg-white/10 backdrop-blur-sm text-base flex flex-col lg:hidden items-center justify-center gap-6 font-medium text-gray-800 transition-all duration-500 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
                     <button className="absolute top-5 sm:top-8 right-4 md:right-8 cursor-pointer" onClick={() => setIsMenuOpen(false)}>
                         <Image src={closeMenu} alt="Close Menu" width={20} height={20} />
