@@ -106,7 +106,7 @@ const Features = () => {
                 Built-in Pomodoro Timer
               </h1>
               <p className="text-[16px] sm:text-[20px] text-[#6C7278] leading-7 sm:leading-9 mb-4">
-                Maximize your focus with our integrated study timer. USe the proven Pomodoro technique or customize you own study intervals. Track your productive hours and build consistent study habits.
+                Maximize your focus with our integrated study timer. Use the proven Pomodoro technique or customize you own study intervals. Track your productive hours and build consistent study habits.
               </p>
 
               <div className="flex items-start gap-2 mb-[18px]">

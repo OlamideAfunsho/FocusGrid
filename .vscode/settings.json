@@ -1,0 +1,9 @@
+{
+  "editor.quickSuggestions": {
+    "strings": "on",
+    "other": "on",
+    "comments": "off"
+  },
+  "editor.suggestOnTriggerCharacters": true,
+  "tailwindCSS.emmetCompletions": true
+}

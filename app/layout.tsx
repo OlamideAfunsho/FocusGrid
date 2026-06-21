@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
+
 import "./globals.css";
 import { quicksand } from "./font";
 import { cn } from "@/lib/utils";
@@ -31,7 +33,7 @@ export default function RootLayout({
       <body
         className={`${inter.className} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <ClerkProvider>{children}</ClerkProvider>
       </body>
     </html>
   );

@@ -60,10 +60,6 @@ const Navbar = () => {
                 {/* Desktop Nav */}
                 <AnimatePresence>
                     <motion.div
-                        initial={{ x: "100%" }}
-                        animate={{ x: 0 }}
-                        exit={{ x: "100%" }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
                         className="hidden lg:flex items-center gap-4 lg:gap-8">
                         {navLinks.map((link, i) => (
                             <Link key={i} href={link.href} onClick={() => handleNavClick(link.href)} className={`group flex flex-col gap-0.5 lg:text-[14px] xl:text-[16px] text-[#6C7278] font-medium hover:text-[#3399FF] transition-all duration-300 cursor-pointer `}>

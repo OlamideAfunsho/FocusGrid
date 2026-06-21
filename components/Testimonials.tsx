@@ -12,7 +12,7 @@ const Testimonials = () => {
       text: "FocusGrid completely changed how I manage my coursework. I went from constantly missing deadlines to being ahead on all my assignments, The course organization is genius",
       name: "Daniel Gbesimowo",
       role: "Mathematics, Unilag.",
-      img: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200",
+      img: "/images/landing_page_images/memoji-1.svg",
     },
     {
       id: 2,
@@ -20,7 +20,7 @@ const Testimonials = () => {
       text: "The Pomodoro timer integration is perfect. I’ve doubled my productive study hours and my grades have never been better. This app is a game-changer for any serious student.",
       name: "Owolabi Kolade",
       role: "Philosophy, Yale",
-      img: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200",
+      img: "/images/landing_page_images/memoji-2.svg",
     },
     {
       id: 3,
@@ -28,7 +28,7 @@ const Testimonials = () => {
       text: "Finally, a productivity app that understands student life! The group project features make collaboration so much easier.My team loves it.",
       name: "James Ogunsemore",
       role: "Digital Marketing, Princeton",
-      img: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200",
+      img: "/images/landing_page_images/memoji-3.svg",
     },
     {
       id: 4,
@@ -36,7 +36,7 @@ const Testimonials = () => {
       text: "I was drowning in scattered notes and missed assignments before FocusGrid. Now everything is organized by course, and I can actually focus on learning instead of scrambling to remember what’s due.",
       name: "Dayo Omojuola",
       role: "Data Science, Harvard",
-      img: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200",
+      img: "/images/landing_page_images/memoji-1.svg",
     },
     {
       id: 5,
@@ -44,7 +44,7 @@ const Testimonials = () => {
       text: "The analytics feature helps me see where I’m spending my time. I’ve optimized my study schedule and have more free time than ever. Plus, the interface is gorgeous!",
       name: "Afunsho Olamide",
       role: "Software Engineering, MIT",
-      img: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200",
+      img: "/images/landing_page_images/memoji-2.svg",
     },
   ];
 
