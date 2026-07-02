@@ -1,20 +1,40 @@
+"use client";
+
 import React from 'react'
 import { BellIcon, SearchIcon } from 'lucide-react'
-import { currentUser } from '@clerk/nextjs/server'
+// import { currentUser } from '@clerk/nextjs/server' // This package won't work because it's guarded by server-only and we've used "use client" at the top of the page
+import { useUser } from '@clerk/nextjs';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 
-const NavBar = async () => {
+const NavBar = () => {
 
-  const user = await currentUser();
+  const pathname = usePathname();
 
-  if (!user) return <div>Not signed in</div>;
+  const routeTitles: Record<string, string> = {
+    '/dashboard': 'Dashboard',
+    '/dashboard/all-tasks': 'Tasks',
+    '/dashboard/study-timer': 'Timer',
+    '/dashboard/settings': 'Settings',
+    '/dashboard/courses': 'Courses',
+  };
+
+  const currentTitle = routeTitles[pathname];
+
+  const { isSignedIn, user, isLoaded } = useUser();
+
+  if (!isLoaded) return <div>Loading...</div>;
+
+  if (!isSignedIn) {
+    return <div>Sign in to view this page</div>
+  }
 
   return (
     <>
     <section>
       <div className='flex justify-between items-center'>
-        <h1 className='text-[18px] font-semibold'>Dashboard</h1>
+        <h1 className='text-[18px] font-semibold'>{currentTitle}</h1>
         {/* <h1 className='text-[18px] font-semibold'>Hey, {user.firstName || 'User'}</h1> */}
         {/* <p className="text-xs text-neutral-500">
           Logged in as: {user.emailAddresses[0]?.emailAddress}

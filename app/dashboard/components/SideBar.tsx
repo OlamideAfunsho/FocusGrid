@@ -7,7 +7,7 @@ import { PlusIcon } from 'lucide-react'
 
 const SideBar = () => {
   return (
-    <div className='flex flex-col gap-4'>
+    <div className='flex flex-col gap-4 h-full'>
       <Link href='/' className='hidden md:flex items-center gap-1.5'>
         <Image src={logo} alt='focusgrid-logo' />
         <h1 className='font-semibold text-[16px] sm:text-[20px] text-[#000000]'>FocusGrid</h1>

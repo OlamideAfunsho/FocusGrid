@@ -4,12 +4,13 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
-import { HomeIcon, NotepadText, TimerIcon, CalendarIcon, NotebookIcon } from 'lucide-react'
+import { HomeIcon, ListTodoIcon, TimerIcon, CalendarIcon, NotebookIcon, SettingsIcon, BookCopyIcon } from 'lucide-react'
+import path from 'path';
 
 
 const NavLinks = () => {
 
-  const navlinks = [
+  const primaryNavLinks = [
     {
       name: 'Dashboard',
       mobileName: 'Dashboard',
@@ -21,7 +22,7 @@ const NavLinks = () => {
       name: 'All Tasks',
       mobileName: 'Tasks',
       path: '/dashboard/all-tasks',
-      icon: NotepadText
+      icon: ListTodoIcon
     },
 
     {
@@ -32,10 +33,10 @@ const NavLinks = () => {
     },
 
     {
-      name: 'Calendar',
-      mobileName: 'Calendar',
-      path: '/dashboard/calendar',
-      icon: CalendarIcon
+      name: 'Courses',
+      mobileName: 'Courses',
+      path: '/dashboard/courses',
+      icon: BookCopyIcon
     },
 
     {
@@ -46,13 +47,29 @@ const NavLinks = () => {
     }
   ]
 
-  const pathname = usePathname()
+  const secondaryNavLinks = [
+    {
+      name: 'Calendar',
+      mobileName: 'Calendar',
+      path: '/dashboard/calendar',
+      icon: CalendarIcon
+    },
+
+    {
+      name: 'Settings',
+      mobileName: 'Settings',
+      path: '/dashboard/settings',
+      icon: SettingsIcon
+    }
+  ]
+
+  const pathname = usePathname();
 
   return (
     <>
-    <section>
+    <section className='flex flex-col justify-between h-full'>
       <div className='flex flex-row md:flex-col'>
-        {navlinks.map((navlink) => {
+        {primaryNavLinks.map((navlink) => {
           return(
             <Link
               key={navlink.name}
@@ -67,7 +84,31 @@ const NavLinks = () => {
 
             >
               <navlink.icon className={clsx('w-6 h-6', pathname === navlink.path ? 'text-[#3399FF]' : 'text-[#8F98A3] ')} />
-              <p className='hidden md:block text-[16px] '>{navlink.name}</p>
+              <p className='hidden md:block text-[16px] font-semibold'>{navlink.name}</p>
+              <p className='text-[12px] md:hidden'>{navlink.mobileName}</p>
+            </Link>
+          );
+        })}
+      </div>
+
+
+      <div className='hidden md:flex flex-col mt-auto'>
+        {secondaryNavLinks.map((navlink) => {
+          return(
+            <Link
+              key={navlink.name}
+              href={navlink.path}
+              className={clsx(
+              'flex flex-col md:flex-row grow items-center justify-center gap-2 mt-1 rounded-[8px] p-3 text-[12px] font-normal hover:bg-[#EEF2FF] text-[#8F98A3] hover:text-[#3399FF] md:flex-none md:justify-start',
+              {
+                'md:bg-[#EEF2FF] text-[#3399FF]': pathname === navlink.path,
+              },
+              )}
+
+
+            >
+              <navlink.icon className={clsx('w-6 h-6', pathname === navlink.path ? 'text-[#3399FF]' : 'text-[#8F98A3] ')} />
+              <p className='hidden md:block text-[16px] font-semibold'>{navlink.name}</p>
               <p className='text-[12px] md:hidden'>{navlink.mobileName}</p>
             </Link>
           );
