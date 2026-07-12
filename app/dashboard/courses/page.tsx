@@ -1,11 +1,16 @@
 "use client"
 import { div } from 'motion/react-client';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+// Import configured browser-side Supabase client utility
+import { createBrowserClient } from '@/lib/supabaseClient';
+import { useSession } from '@clerk/nextjs';
+import { toast, ToastContainer } from 'react-toastify';
+import { Edit2Icon, Trash2Icon } from 'lucide-react'
 
 
 interface CourseItem {
     id: string;
-    course_name: string;
+    name: string;
     course_code: string;
 }
 
@@ -16,19 +21,61 @@ const page = () => {
     const [courseName, setCourseName] = useState('');
     const [courseCode, setCourseCode] = useState('');
 
-    const handleCourseSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const { session, isLoaded } = useSession();
+    const supabase = createBrowserClient(session);
 
-        // Create a structured object matching our blueprint
-        const newCourse: CourseItem = {
-            id: Math.random().toString(),
-            course_name: courseName,
-            course_code: courseCode.toUpperCase().trim()
+
+    // Read existing rows from the database on page load
+    useEffect(() => {
+
+        if(!isLoaded || !session ) return;
+
+        async function loadInitialCourses() {
+            const { data, error } = await supabase
+                .from('courses') // Target the courses table
+                .select('id, name, course_code') // Requests only the specific columns needed
+
+            if (error) {
+                console.error("Error retrieving data:", error.message);
+                return;
+            }
+            if (data) {
+                setCourses(data); // Feed the fetched database array into the state
+            }
         }
 
-        // Append the new object to our local array state
-        setCourses([...courses, newCourse]);
+        loadInitialCourses();
+    }, [isLoaded, session]);
 
+    // Submitting data to the database
+    const handleCourseSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const normalizedCourseCode = courseCode.toUpperCase().trim();
+
+        // Push the raw entry payload up to the live table
+        // Specifying .select() tells the database to return the newly created row immediately
+        const { data, error } = await supabase
+            .from('courses')
+            .insert({
+                name: courseName,
+                course_code: normalizedCourseCode
+            })
+            .select()
+            .single() // Tell the client wrapper to return a single object instead of an array
+
+        if (error) {
+            toast.error("Error, try again");
+            console.error("Fail to register database entry:", error.message);
+            return;
+        }
+        if (data) {
+            // Append database object
+            setCourses([...courses, data]);
+        }
+
+
+        toast.success("Course added successfully!");
         // Reset the form fields after submission
         setCourseName('');
         setCourseCode('');
@@ -37,11 +84,12 @@ const page = () => {
   return (
     <>
     <div>
+        <ToastContainer position="top-right" autoClose={2000} />
         <h1 className='text-center md:text-left text-2xl'>
             View <span className="text-[#3399FF]">All</span> Your <span className="text-[#3399FF]">Courses</span>
         </h1>
 
-        <form onSubmit={handleCourseSubmit} className='mt-2 mb-2'>
+        <form onSubmit={handleCourseSubmit} className='mt-2 mb-4'>
            <div className='flex flex-col gap-2 mb-6'>
                 <div className='flex flex-col md:flex-row items-start md:items-center gap-0 md:gap-2'>
                     <label className='text-[#8F98A3]'>Course Name:</label>
@@ -75,13 +123,53 @@ const page = () => {
                 <p className='italic'>No courses added yet. Add a new course above.</p>
 
             ) : (
-                <div className='flex flex-col gap-2 '>
-                    {courses.map((course) => (
-                        <div key={course.id}>
-                            <h2>{course.course_name}</h2>
-                            <p>{course.course_code}</p>
+                <div className='bg-[#EEF2FF] rounded-[8px] md:p-4 w-full md:w-3/5 overflow-x-auto'>
+
+                    {/* <div className='flex flex-row justify-between'>
+                        <div className='flex flex-col justify-center'>
+                            <h1>Course Name</h1>
+                            {courses.map((course) => (
+                                <span key={course.id}>{course.name}</span>
+                            ))}
                         </div>
-                    ))}
+                        <div className='flex flex-col justify-center'>
+                            <h1>Course Code</h1>
+                            {courses.map((course) => (
+                                <span key={course.id}>{course.course_code}</span>
+                            ))}
+                        </div>
+                        <div className='flex flex-col justify-center'>
+
+                        </div>
+                    </div> */}
+
+                    <table className='text-left'>
+                            <thead>
+                                <tr>
+                                    <th className='text-[14px] md:text-[16px] px-4 py-2'>Course Name</th>
+                                    <th className='text-[14px] md:text-[16px] px-4 py-2'>Course Code</th>
+                                    <th className='text-[14px] md:text-[16px] px-4 py-2'>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody className='text-[12px] md:text-[14px]'>
+                                {courses.map((course) => (
+                                    <tr key={course.id} className=''>
+                                        <td className='px-4 py-1'>{course.name}</td>
+                                        <td className='px-4 py-1'>{course.course_code}</td>
+                                        <td className='px-4 py-1'>
+                                            <button>
+                                                <Edit2Icon className='w-3 h-3 md:w-4 md:h-4 mr-2' />
+                                            </button>
+                                            <button>
+                                                <Trash2Icon className='w-3 h-3 md:w-4 md:h-4 ' />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                    </table>
+                    
                 </div>
             )}
         </div>

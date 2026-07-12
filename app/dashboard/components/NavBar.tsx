@@ -1,11 +1,13 @@
 "use client";
 
 import React from 'react'
+import logo from '../../../public/images/landing_page_images/logo.svg'
 import { BellIcon, SearchIcon } from 'lucide-react'
 // import { currentUser } from '@clerk/nextjs/server' // This package won't work because it's guarded by server-only and we've used "use client" at the top of the page
 import { useUser } from '@clerk/nextjs';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 
 const NavBar = () => {
@@ -34,7 +36,11 @@ const NavBar = () => {
     <>
     <section>
       <div className='flex justify-between items-center'>
-        <h1 className='text-[18px] font-semibold'>{currentTitle}</h1>
+        <Link href='/' className='flex md:hidden items-center gap-1.5'>
+          <Image src={logo} alt='focusgrid-logo' />
+          <h1 className='font-semibold text-[16px] sm:text-[20px] text-[#000000]'>FocusGrid</h1>
+        </Link>
+        <h1 className='hidden md:block text-[18px] font-semibold'>{currentTitle}</h1>
         {/* <h1 className='text-[18px] font-semibold'>Hey, {user.firstName || 'User'}</h1> */}
         {/* <p className="text-xs text-neutral-500">
           Logged in as: {user.emailAddresses[0]?.emailAddress}
