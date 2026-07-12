@@ -21,8 +21,29 @@ const page = () => {
     const [courseName, setCourseName] = useState('');
     const [courseCode, setCourseCode] = useState('');
 
+    const [editingCourse, setEditingCourse] = useState<CourseItem | null>(null);
+
+    // Form input holding states for the modal panel
+    const [editCourseName, setEditCourseName] = useState('');
+    const [editCourseCode, setEditCourseCode] = useState('');
+
     const { session, isLoaded } = useSession();
     const supabase = createBrowserClient(session);
+
+    // Triggered when the user clicks the edit button for a specific course. This sets the state to the course being edited and pre-fills the form fields with its current values.
+    const openEditModal = (course: CourseItem) => {
+        setEditingCourse(course);
+        setEditCourseName(course.name);
+        setEditCourseCode(course.course_code);
+    }
+
+    // Closes the panel and resets the editing state
+    const closeEditModal = () => {
+        setEditingCourse(null);
+        setEditCourseName('');
+        setEditCourseCode('');
+    }
+
 
 
     // Read existing rows from the database on page load
@@ -81,6 +102,66 @@ const page = () => {
         setCourseCode('');
     };
 
+    // Deleting courses
+    const handleCourseDelete = async (id: string) => {
+        // Confrim before deleting course
+        if(!confirm("Are you sure you want to delete this course?")) return;
+
+        // Execute the delete query on supabase
+        const {error} = await supabase
+            .from ("courses")
+            .delete()
+            .eq('id', id); // This targets ONLY the row matching this specific UUID
+
+        if (error) {
+            toast.error("Error deleting course, try again");
+            console.error('Deletion failed:', error.message);
+            return;
+        }
+
+        toast.success("Course deleted successfully!");
+        // Filter out the removed course from local state
+        setCourses(prev => prev.filter(course => course.id !== id));
+        
+
+    };
+
+    // Updating courses
+    const handleCourseUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editingCourse) return;
+
+        const normalizedCourseCode = editCourseCode.toUpperCase().trim();
+
+        // Send the updated properties to the database
+        const { data, error } = await supabase
+            .from("courses")
+            .update({
+                name: editCourseName,
+                course_code: normalizedCourseCode
+            })
+            .eq('id', editingCourse.id)
+            .select()
+            .single();
+
+        if (error) {
+            toast.error("Error updating course, try again");
+            console.error("Update failure:", error.message);
+            return;
+        }
+
+        if (data) {
+            // Swap the old info for the new data
+            setCourses(prev => prev.map(course => course.id === editingCourse.id ? data : course));
+            toast.success("Course updated successfully!");
+            
+            // Close the modal and reset the editing state
+            closeEditModal();
+        }
+        
+    };
+
+    
   return (
     <>
     <div>
@@ -154,21 +235,84 @@ const page = () => {
 
                             <tbody className='text-[12px] md:text-[14px]'>
                                 {courses.map((course) => (
-                                    <tr key={course.id} className=''>
-                                        <td className='px-4 py-1'>{course.name}</td>
-                                        <td className='px-4 py-1'>{course.course_code}</td>
-                                        <td className='px-4 py-1'>
-                                            <button>
-                                                <Edit2Icon className='w-3 h-3 md:w-4 md:h-4 mr-2' />
-                                            </button>
-                                            <button>
-                                                <Trash2Icon className='w-3 h-3 md:w-4 md:h-4 ' />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
+                                        <tr key={course.id} className=''>
+                                            <td className='px-4 py-1'>{course.name}</td>
+                                            <td className='px-4 py-1'>{course.course_code}</td>
+                                            <td className='px-4 py-1'>
+                                                <button onClick={() => openEditModal(course)} className='mr-2 cursor-pointer'>
+                                                    <Edit2Icon className='w-3 h-3 md:w-4 md:h-4' />
+                                                </button>
+                                                <button onClick={() => handleCourseDelete(course.id)} className='cursor-pointer'>
+                                                    <Trash2Icon className='w-3 h-3 md:w-4 md:h-4 ' />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    )
+                                    
+                                )}
                             </tbody>
                     </table>
+
+                    {editingCourse && (
+                        <div className="fixed px-2 inset-0 z-50 flex items-center justify-center">
+          
+                            {/* DARK BACKDROP LAYER (Dims out the background workspace) */}
+                            <div 
+                                onClick={closeEditModal} 
+                                className="absolute inset-0 bg-neutral-900/40 backdrop-blur-sm"
+                            />
+
+                            {/* THE INTERACTIVE MODAL BOX PANEL */}
+                            <div className="relative bg-white w-full max-w-md p-6 rounded-2xl shadow-xl border border-neutral-100 animate-in fade-in zoom-in-95 duration-150">
+                                <h3 className="text-base font-bold text-neutral-900 mb-1">Modify Course Details</h3>
+                                <p className="text-xs text-neutral-400 mb-4">Adjust information for this course.</p>
+
+                                <form onSubmit={handleCourseUpdate} className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-neutral-500 mb-1">Course Code</label>
+                                        <input 
+                                        type="text" 
+                                        required
+                                        value={editCourseCode}
+                                        onChange={(e) => setEditCourseCode(e.target.value)}
+                                        className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm uppercase outline-none focus:border-blue-500"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-semibold text-neutral-500 mb-1">Course Name</label>
+                                        <input 
+                                        type="text" 
+                                        required
+                                        value={editCourseName}
+                                        onChange={(e) => setEditCourseName(e.target.value)}
+                                        className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm outline-none focus:border-blue-500"
+                                        />
+                                    </div>
+
+                                    {/* ACTION TOGGLE BUTTONS */}
+                                    <div className="flex justify-end gap-2 pt-2">
+                                        <button 
+                                        type="submit"
+                                        className=" bg-[#3399ff] px-4 py-2 text-white rounded-lg transition bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] cursor-pointer shadow-sm "
+                                        >
+                                        Save Changes
+                                        </button>
+
+                                        <button 
+                                        type="button" 
+                                        onClick={closeEditModal}
+                                        className="bg-[#FF3333] text-white px-4 py-2 rounded-[8px] cursor-pointer shadow-[0px_7px_9.1px_0px_#C9C9FF9F] bg-[linear-gradient(109.51deg,_#FF3333_2.27%,_#FF0000_100%)]"
+                                        >
+                                        Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+
+                    )}
                     
                 </div>
             )}
