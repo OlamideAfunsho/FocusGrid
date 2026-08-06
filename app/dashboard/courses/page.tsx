@@ -3,7 +3,7 @@ import { div } from 'motion/react-client';
 import React, { useEffect, useState } from 'react'
 // Import configured browser-side Supabase client utility
 import { createBrowserClient } from '@/lib/supabaseClient';
-import { useSession } from '@clerk/nextjs';
+import { useSession, useUser } from '@clerk/nextjs';
 import { toast, ToastContainer } from 'react-toastify';
 import { Edit2Icon, Trash2Icon } from 'lucide-react'
 
@@ -26,6 +26,8 @@ const page = () => {
     // Form input holding states for the modal panel
     const [editCourseName, setEditCourseName] = useState('');
     const [editCourseCode, setEditCourseCode] = useState('');
+
+    const { user } = useUser();
 
     const { session, isLoaded } = useSession();
     const supabase = createBrowserClient(session);
@@ -80,7 +82,8 @@ const page = () => {
             .from('courses')
             .insert({
                 name: courseName,
-                course_code: normalizedCourseCode
+                course_code: normalizedCourseCode,
+                user_id: user?.id // Associate the course with the current user's ID
             })
             .select()
             .single() // Tell the client wrapper to return a single object instead of an array
@@ -201,7 +204,7 @@ const page = () => {
 
         <div>
             {courses.length === 0 ? (
-                <p className='italic'>No courses added yet. Add a new course above.</p>
+                <p className='italic text-[#8F98A3]'>No courses added yet. Add a new course above.</p>
 
             ) : (
                 <div className='bg-[#EEF2FF] rounded-[8px] md:p-4 w-full md:w-3/5 overflow-x-auto'>
