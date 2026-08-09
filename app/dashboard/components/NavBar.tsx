@@ -20,6 +20,7 @@ const NavBar = () => {
     '/dashboard/study-timer': 'Timer',
     '/dashboard/settings': 'Settings',
     '/dashboard/courses': 'Courses',
+    '/dashboard/notes': 'Notes',
   };
 
   const currentTitle = routeTitles[pathname];
