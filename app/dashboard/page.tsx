@@ -83,18 +83,18 @@ const page = () => {
     <>
     <div>
 
-      <div className='flex flex-con justify-center gap-2 lg:gap-8 flex-wrap md:flex-nowrap lg:flex-row md:justify-between'>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
         {stats.map((stat, index) => {
-          return(
+          return (
             <div 
               key={index}
-              className='flex flex-col rounded-[12px] p-4 w-full shadow-[0_0_40px_5px_rgba(0,0,0,0.1)]'
+              className="flex flex-col rounded-[8px] lg:rounded-[12px] p-4 w-full shadow-[0_0_40px_5px_rgba(0,0,0,0.1)]"
             >
-              <stat.icon className="w-10 h-10 text-[#3399FF] bg-[#EFF6FF] p-2.5 rounded-[6px] mb-4" />
-              <h1 className='font-semibold text-4xl mb-1'>{stat.value}</h1>
-              <span className='text-[#8F98A3] font-light md:font-medium'>{stat.title}</span>
+              <stat.icon className="w-8 h-8 sm:w-10 sm:h-10 text-[#3399FF] bg-[#EFF6FF] p-2 rounded-[6px] mb-4" />
+              <h1 className="font-semibold text-2xl sm:text-4xl mb-1">{stat.value}</h1>
+              <span className="text-[#8F98A3] font-light lg:font-medium text-[12px] sm:text-base">{stat.title}</span>
             </div>
-          )
+          );
         })}
       </div>
 
