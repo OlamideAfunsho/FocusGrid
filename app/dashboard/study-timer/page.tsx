@@ -273,7 +273,7 @@ export default function TimerPage() {
         <div className="flex items-center gap-4 mt-6">
           <button
             onClick={() => setIsRunning(!isRunning)}
-            className="flex items-center gap-2 bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] text-white px-8 py-3 rounded-xl font-medium shadow-md hover:opacity-90 transition cursor-pointer"
+            className="flex items-center gap-2 shadow-[0px_7px_9.1px_0px_#C9C9FF9F] bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] text-white px-8 py-2.5 rounded-[8px] font-medium hover:opacity-90 transition cursor-pointer"
           >
             {isRunning ? (
               <>
