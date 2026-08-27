@@ -15,9 +15,11 @@ export default clerkMiddleware(
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files
+    // Skip Next.js internals and standard static files
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes and proxy paths
+    // Always run for API routes
     "/(api|trpc)(.*)",
+    // Explicitly handle all Clerk proxy requests (overrides static .js exclusions)
+    "/__clerk/(.*)",
   ],
 };
