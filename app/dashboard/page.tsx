@@ -5,6 +5,9 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { getWeeklyStudyFocus } from '@/lib/supabase/queries';
 import WeeklyStudyCharts from './components/WeeklyStudyCharts';
+import QuickStartTimer from './components/QuickStartTimer';
+import FocusDistribution from './components/FocusDistribution';
+// import TopPriorityTasks from './components/TopPriorityTasks';
 
 export default async function DashboardPage() {
   // 1. Get authenticated user ID (async in Clerk v5)
@@ -16,8 +19,8 @@ export default async function DashboardPage() {
 
   const supabase = await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
-  // 2. Fetch all dashboard data concurrently on the server
-  const [weeklyData, tasksRes, sessionsRes, coursesRes] = await Promise.all([
+  //2. Fetch all dashboard data concurrently on the server
+  const [weeklyData, tasksRes, sessionsRes, coursesRes, activeCoursesList] = await Promise.all([
     getWeeklyStudyFocus(userId),
     supabase
       .from('tasks')
@@ -32,6 +35,11 @@ export default async function DashboardPage() {
       .from('courses')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', userId),
+    supabase
+      .from('courses')
+      .select('id, name')
+      .eq('user_id', userId)
+      .order('name', { ascending: true }),
   ]);
 
   // 3. Aggregate stats metrics
@@ -43,6 +51,8 @@ export default async function DashboardPage() {
   const studyHours = (totalMinutes / 60).toFixed(1);
   const completedSessions = sessionsRes.data?.length ?? 0;
   const coursesCount = coursesRes.count ?? 0;
+
+  const courses = activeCoursesList.data || [];
 
   const stats = [
     {
@@ -83,8 +93,18 @@ export default async function DashboardPage() {
       </div>
 
       {/* Weekly Study Focus Chart Section */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <WeeklyStudyCharts data={weeklyData} />
+      <div className="grid grid-cols-1 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:col-span-3 mb-6">
+          <div className='lg:col-span-2'>
+            <WeeklyStudyCharts data={weeklyData} />
+          </div>
+          <FocusDistribution />
+        </div>
+        <div className="lg:col-span-1">
+          <QuickStartTimer courses={courses} />
+        </div>
+
+        {/* <TopPriorityTasks /> */}
       </div>
     </div>
   );

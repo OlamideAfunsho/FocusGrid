@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { 
   PlayIcon, 
   PauseIcon, 
@@ -15,7 +16,7 @@ import {
 import { createBrowserClient } from '@/lib/supabaseClient';
 import { useSession } from '@clerk/nextjs';
 
-type TimerMode = 'focus' | 'short_break' | 'long_break';
+type TimerMode = 'pomodoro' | 'deep_work' | 'marathon';
 
 interface CourseOption {
   id: string;
@@ -24,17 +25,18 @@ interface CourseOption {
 }
 
 const MODE_CONFIGS: Record<TimerMode, { label: string; defaultMinutes: number }> = {
-  focus: { label: 'Focus Session', defaultMinutes: 25 },
-  short_break: { label: 'Short Break', defaultMinutes: 5 },
-  long_break: { label: 'Long Break', defaultMinutes: 15 },
+  pomodoro: { label: 'Pomodoro', defaultMinutes: 25 },
+  deep_work: { label: 'Deep Work', defaultMinutes: 45 },
+  marathon: { label: 'Marathon', defaultMinutes: 60 },
 };
 
-export default function TimerPage() {
+function TimerContent() {
+  const searchParams = useSearchParams();
   const { session, isLoaded } = useSession();
   const supabase = useMemo(() => createBrowserClient(session), [session]);
 
   // Timer & Control State
-  const [mode, setMode] = useState<TimerMode>('focus');
+  const [mode, setMode] = useState<TimerMode>('pomodoro');
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -42,10 +44,30 @@ export default function TimerPage() {
   // Data State
   const [courses, setCourses] = useState<CourseOption[]>([]);
   const [selectedCourseId, setSelectedCourseId] = useState<string>('');
-  const [todayFocusMinutes, setTodayFocusMinutes] = useState(0);
+  const [todayPomodoroMinutes, setTodayPomodoroMinutes] = useState(0);
   const [completedSessionsCount, setCompletedSessionsCount] = useState(0);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Sync incoming URL query params from QuickStartTimer
+  useEffect(() => {
+    const durationParam = searchParams.get('duration');
+    const courseIdParam = searchParams.get('courseId');
+
+    if (courseIdParam) {
+      setSelectedCourseId(courseIdParam);
+    }
+
+    if (durationParam) {
+      const mins = parseInt(durationParam, 10);
+      if (!isNaN(mins) && mins > 0) {
+        setTimeLeft(mins * 60);
+        if (mins === 45 || mins === 40) setMode('deep_work');
+        else if (mins === 60) setMode('marathon');
+        else if (mins === 25) setMode('pomodoro');
+      }
+    }
+  }, [searchParams]);
 
   // Fetch courses and today's session stats
   useEffect(() => {
@@ -66,10 +88,10 @@ export default function TimerPage() {
 
       if (coursesRes.data) setCourses(coursesRes.data);
       if (sessionsRes.data) {
-        const focusSessions = sessionsRes.data.filter(s => s.session_type === 'focus');
-        const totalMins = focusSessions.reduce((acc, s) => acc + s.duration_minutes, 0);
-        setTodayFocusMinutes(totalMins);
-        setCompletedSessionsCount(focusSessions.length);
+        const pomodoroSessions = sessionsRes.data.filter(s => s.session_type === 'pomodoro');
+        const totalMins = pomodoroSessions.reduce((acc, s) => acc + s.duration_minutes, 0);
+        setTodayPomodoroMinutes(totalMins);
+        setCompletedSessionsCount(pomodoroSessions.length);
       }
     };
 
@@ -83,8 +105,8 @@ export default function TimerPage() {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5 note
-      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3); // A5 note
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
       gain.gain.setValueAtTime(0.15, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
       osc.connect(gain);
@@ -108,8 +130,8 @@ export default function TimerPage() {
       session_type: mode
     });
 
-    if (mode === 'focus') {
-      setTodayFocusMinutes(prev => prev + duration);
+    if (mode === 'pomodoro') {
+      setTodayPomodoroMinutes(prev => prev + duration);
       setCompletedSessionsCount(prev => prev + 1);
     }
   };
@@ -167,14 +189,14 @@ export default function TimerPage() {
           <div>
             <h1 className="text-2xl">Study <span className="text-[#3399FF]">Timer</span></h1>
             <p className="text-sm text-neutral-500 mt-1">
-              Track focus intervals and log study time directly to your courses.
+              Track pomodoro intervals and log study time directly to your courses.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-neutral-200 rounded-xl shadow-sm">
               <ClockIcon className="w-4 h-4 text-[#3399FF]" />
-              <span className="text-xs font-semibold text-neutral-700">{todayFocusMinutes}m Today</span>
+              <span className="text-xs font-semibold text-neutral-700">{todayPomodoroMinutes}m Today</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-neutral-200 rounded-xl shadow-sm">
               <FlameIcon className="w-4 h-4 text-orange-500" />
@@ -191,14 +213,14 @@ export default function TimerPage() {
         <button
           onClick={() => setIsFullscreen(!isFullscreen)}
           className="absolute top-4 right-4 p-2 text-neutral-400 hover:text-neutral-600 rounded-lg transition"
-          title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen Focus'}
+          title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen Pomodoro'}
         >
           {isFullscreen ? <Minimize2Icon className="w-5 h-5" /> : <Maximize2Icon className="w-5 h-5" />}
         </button>
 
         {/* Mode Selector Tabs */}
         <div className="flex items-center p-1 bg-neutral-100 rounded-xl mb-6 gap-1">
-          {(['focus', 'short_break', 'long_break'] as TimerMode[]).map(m => (
+          {(['pomodoro', 'deep_work', 'marathon'] as TimerMode[]).map(m => (
             <button
               key={m}
               onClick={() => switchMode(m)}
@@ -214,25 +236,23 @@ export default function TimerPage() {
         </div>
 
         {/* Course Assignment Dropdown */}
-        {mode === 'focus' && (
-          <div className="mb-6 w-full max-w-xs">
-            <div className="relative">
-              <BookOpenIcon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-              <select
-                value={selectedCourseId}
-                onChange={e => setSelectedCourseId(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs font-medium text-neutral-700 focus:outline-none focus:ring-2 focus:ring-[#3399FF]"
-              >
-                <option value="">-- Tag a Course (Optional) --</option>
-                {courses.map(course => (
-                  <option key={course.id} value={course.id}>
-                    {course.course_code} - {course.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <div className="mb-6 w-full max-w-xs">
+          <div className="relative">
+            <BookOpenIcon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+            <select
+              value={selectedCourseId}
+              onChange={e => setSelectedCourseId(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs font-medium text-neutral-700 pomodoro:outline-none pomodoro:ring-2 pomodoro:ring-[#3399FF]"
+            >
+              <option value="">-- Tag a Course (Optional) --</option>
+              {courses.map(course => (
+                <option key={course.id} value={course.id}>
+                  {course.course_code} - {course.name}
+                </option>
+              ))}
+            </select>
           </div>
-        )}
+        </div>
 
         {/* Circular Progress Display */}
         <div className="relative flex items-center justify-center my-4">
@@ -296,5 +316,13 @@ export default function TimerPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function TimerPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-neutral-400">Loading study timer...</div>}>
+      <TimerContent />
+    </Suspense>
   );
 }
