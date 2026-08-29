@@ -94,17 +94,18 @@ export default async function DashboardPage() {
 
       {/* Weekly Study Focus Chart Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:col-span-3 mb-6">
-          <div className='lg:col-span-2'>
-            <WeeklyStudyCharts data={weeklyData} />
-          </div>
-          <FocusDistribution />
-        </div>
         <div className="lg:col-span-1">
           <QuickStartTimer courses={courses} />
         </div>
 
         {/* <TopPriorityTasks /> */}
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:col-span-3 mt-6">
+          <div className='lg:col-span-2'>
+            <WeeklyStudyCharts data={weeklyData} />
+          </div>
+          <FocusDistribution />
+        </div>
       </div>
     </div>
   );
