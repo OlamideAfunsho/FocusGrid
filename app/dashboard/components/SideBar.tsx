@@ -1,11 +1,22 @@
+"use client";
+
 import logo from '../../../public/images/landing_page_images/logo.svg'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import NavLinks from './NavLinks'
 import { PlusIcon } from 'lucide-react'
+import { useUser } from '@clerk/nextjs'
 
 const SideBar = () => {
+  const { isSignedIn, user, isLoaded } = useUser();
+
+  if (!isLoaded) return <div>Loading...</div>;
+
+  if (!isSignedIn) {
+    return <div>Sign in to view this page</div>
+  }
+
   return (
     <div className='flex flex-col gap-4 h-full'>
       <Link href='/' className='hidden md:flex items-center gap-1.5'>
@@ -19,6 +30,14 @@ const SideBar = () => {
       </button>
 
       <NavLinks />
+      
+      <div className='hidden md:flex items-center gap-3 bg-[#F9FAFB] p-3 rounded-[8px]'>
+        <Image src={user?.imageUrl} alt='User avatar' width={32} height={32} className='rounded-full' />
+        <div>
+          <h1 className='font-semibold text-[#3E3A72]'>{user?.fullName}</h1>
+          <span className='text-[12px] text-[#3E3A72]'>{user?.primaryEmailAddress?.emailAddress ?? user?.emailAddresses?.[0]?.emailAddress ?? 'No email'}</span>
+        </div>
+      </div>
     </div>
   )
 }

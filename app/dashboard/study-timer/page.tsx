@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo, Suspense } from 'react';
+import React, { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { 
   PlayIcon, 
@@ -9,14 +9,12 @@ import {
   BookOpenIcon, 
   Maximize2Icon, 
   Minimize2Icon, 
-  CheckCircle2Icon,
   FlameIcon,
   ClockIcon
 } from 'lucide-react';
 import { createBrowserClient } from '@/lib/supabaseClient';
 import { useSession } from '@clerk/nextjs';
-
-type TimerMode = 'pomodoro' | 'deep_work' | 'marathon';
+import { useTimer, MODE_CONFIGS, TimerMode } from '@/context/TimerContext';
 
 interface CourseOption {
   id: string;
@@ -24,152 +22,45 @@ interface CourseOption {
   course_code: string;
 }
 
-const MODE_CONFIGS: Record<TimerMode, { label: string; defaultMinutes: number }> = {
-  pomodoro: { label: 'Pomodoro', defaultMinutes: 25 },
-  deep_work: { label: 'Deep Work', defaultMinutes: 45 },
-  marathon: { label: 'Marathon', defaultMinutes: 60 },
-};
-
 function TimerContent() {
   const searchParams = useSearchParams();
   const { session, isLoaded } = useSession();
   const supabase = useMemo(() => createBrowserClient(session), [session]);
 
-  // Timer & Control State
-  const [mode, setMode] = useState<TimerMode>('pomodoro');
-  const [timeLeft, setTimeLeft] = useState(25 * 60);
-  const [isRunning, setIsRunning] = useState(false);
+  const {
+    mode,
+    timeLeft,
+    isRunning,
+    selectedCourseId,
+    todayPomodoroMinutes,
+    completedSessionsCount,
+    startTimer,
+    pauseTimer,
+    resetTimer,
+    switchMode,
+    setSelectedCourseId,
+  } = useTimer();
+
   const [isFullscreen, setIsFullscreen] = useState(false);
-
-  // Data State
   const [courses, setCourses] = useState<CourseOption[]>([]);
-  const [selectedCourseId, setSelectedCourseId] = useState<string>('');
-  const [todayPomodoroMinutes, setTodayPomodoroMinutes] = useState(0);
-  const [completedSessionsCount, setCompletedSessionsCount] = useState(0);
 
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Sync incoming URL query params from QuickStartTimer
+  // Sync incoming URL params if passed from QuickStart
   useEffect(() => {
-    const durationParam = searchParams.get('duration');
     const courseIdParam = searchParams.get('courseId');
-
-    if (courseIdParam) {
+    if (courseIdParam && !selectedCourseId) {
       setSelectedCourseId(courseIdParam);
     }
+  }, [searchParams, selectedCourseId, setSelectedCourseId]);
 
-    if (durationParam) {
-      const mins = parseInt(durationParam, 10);
-      if (!isNaN(mins) && mins > 0) {
-        setTimeLeft(mins * 60);
-        if (mins === 45 || mins === 40) setMode('deep_work');
-        else if (mins === 60) setMode('marathon');
-        else if (mins === 25) setMode('pomodoro');
-      }
-    }
-  }, [searchParams]);
-
-  // Fetch courses and today's session stats
+  // Fetch courses list
   useEffect(() => {
     if (!isLoaded || !session?.user?.id) return;
-
-    const loadData = async () => {
-      const todayStart = new Date();
-      todayStart.setHours(0, 0, 0, 0);
-
-      const [coursesRes, sessionsRes] = await Promise.all([
-        supabase.from('courses').select('id, name, course_code'),
-        supabase
-          .from('study_sessions')
-          .select('duration_minutes, session_type')
-          .eq('user_id', session.user.id)
-          .gte('completed_at', todayStart.toISOString())
-      ]);
-
-      if (coursesRes.data) setCourses(coursesRes.data);
-      if (sessionsRes.data) {
-        const pomodoroSessions = sessionsRes.data.filter(s => s.session_type === 'pomodoro');
-        const totalMins = pomodoroSessions.reduce((acc, s) => acc + s.duration_minutes, 0);
-        setTodayPomodoroMinutes(totalMins);
-        setCompletedSessionsCount(pomodoroSessions.length);
-      }
+    const loadCourses = async () => {
+      const { data } = await supabase.from('courses').select('id, name, course_code');
+      if (data) setCourses(data);
     };
-
-    loadData();
+    loadCourses();
   }, [isLoaded, session, supabase]);
-
-  // Audio trigger using Web Audio API
-  const playCompletionSound = () => {
-    try {
-      const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
-      gain.gain.setValueAtTime(0.15, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.5);
-    } catch {
-      // AudioContext unavailable or blocked by browser policy
-    }
-  };
-
-  // Log session to Supabase
-  const logCompletedSession = async () => {
-    if (!session?.user?.id) return;
-    const duration = MODE_CONFIGS[mode].defaultMinutes;
-
-    await supabase.from('study_sessions').insert({
-      user_id: session.user.id,
-      course_id: selectedCourseId || null,
-      duration_minutes: duration,
-      session_type: mode
-    });
-
-    if (mode === 'pomodoro') {
-      setTodayPomodoroMinutes(prev => prev + duration);
-      setCompletedSessionsCount(prev => prev + 1);
-    }
-  };
-
-  // Timer Countdown Effect
-  useEffect(() => {
-    if (isRunning) {
-      timerRef.current = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            clearInterval(timerRef.current!);
-            setIsRunning(false);
-            playCompletionSound();
-            logCompletedSession();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [isRunning, mode, selectedCourseId, session]);
-
-  const switchMode = (newMode: TimerMode) => {
-    setIsRunning(false);
-    setMode(newMode);
-    setTimeLeft(MODE_CONFIGS[newMode].defaultMinutes * 60);
-  };
-
-  const resetTimer = () => {
-    setIsRunning(false);
-    setTimeLeft(MODE_CONFIGS[mode].defaultMinutes * 60);
-  };
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -183,7 +74,6 @@ function TimerContent() {
   return (
     <div className={`transition-all duration-300 ${isFullscreen ? 'fixed inset-0 z-50 bg-neutral-900 text-white flex flex-col items-center justify-center p-6' : 'space-y-6'}`}>
       
-      {/* Header & Stats Bar */}
       {!isFullscreen && (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
@@ -206,10 +96,8 @@ function TimerContent() {
         </div>
       )}
 
-      {/* Main Timer Container */}
       <div className={`mx-auto w-full max-w-xl bg-white border border-neutral-200 rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col items-center relative ${isFullscreen ? 'bg-neutral-800 border-neutral-700 text-white' : ''}`}>
         
-        {/* Fullscreen Toggle */}
         <button
           onClick={() => setIsFullscreen(!isFullscreen)}
           className="absolute top-4 right-4 p-2 text-neutral-400 hover:text-neutral-600 rounded-lg transition"
@@ -218,9 +106,8 @@ function TimerContent() {
           {isFullscreen ? <Minimize2Icon className="w-5 h-5" /> : <Maximize2Icon className="w-5 h-5" />}
         </button>
 
-        {/* Mode Selector Tabs */}
         <div className="flex items-center p-1 bg-neutral-100 rounded-xl mb-6 gap-1">
-          {(['pomodoro', 'deep_work', 'marathon'] as TimerMode[]).map(m => (
+          {(['pomodoro', 'deep_work', 'marathon'] as TimerMode[]).map((m) => (
             <button
               key={m}
               onClick={() => switchMode(m)}
@@ -235,17 +122,16 @@ function TimerContent() {
           ))}
         </div>
 
-        {/* Course Assignment Dropdown */}
         <div className="mb-6 w-full max-w-xs">
           <div className="relative">
             <BookOpenIcon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
             <select
               value={selectedCourseId}
-              onChange={e => setSelectedCourseId(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs font-medium text-neutral-700 pomodoro:outline-none pomodoro:ring-2 pomodoro:ring-[#3399FF]"
+              onChange={(e) => setSelectedCourseId(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs font-medium text-neutral-700 focus:outline-none focus:ring-2 focus:ring-[#3399FF]"
             >
               <option value="">-- Tag a Course (Optional) --</option>
-              {courses.map(course => (
+              {courses.map((course) => (
                 <option key={course.id} value={course.id}>
                   {course.course_code} - {course.name}
                 </option>
@@ -254,7 +140,6 @@ function TimerContent() {
           </div>
         </div>
 
-        {/* Circular Progress Display */}
         <div className="relative flex items-center justify-center my-4">
           <svg className="w-64 h-64 transform -rotate-90">
             <circle
@@ -289,10 +174,9 @@ function TimerContent() {
           </div>
         </div>
 
-        {/* Primary Controls */}
         <div className="flex items-center gap-4 mt-6">
           <button
-            onClick={() => setIsRunning(!isRunning)}
+            onClick={isRunning ? pauseTimer : startTimer}
             className="flex items-center gap-2 shadow-[0px_7px_9.1px_0px_#C9C9FF9F] bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] text-white px-8 py-2.5 rounded-[8px] font-medium hover:opacity-90 transition cursor-pointer"
           >
             {isRunning ? (
@@ -319,7 +203,7 @@ function TimerContent() {
   );
 }
 
-export default function TimerPage() {
+export default function StudyTimer() {
   return (
     <Suspense fallback={<div className="p-6 text-neutral-400">Loading study timer...</div>}>
       <TimerContent />

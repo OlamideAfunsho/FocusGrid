@@ -4,7 +4,7 @@ import React from 'react'
 import logo from '../../../public/images/landing_page_images/logo.svg'
 import { BellIcon, SearchIcon } from 'lucide-react'
 // import { currentUser } from '@clerk/nextjs/server' // This package won't work because it's guarded by server-only and we've used "use client" at the top of the page
-import { useUser } from '@clerk/nextjs';
+import { UserButton, useUser } from '@clerk/nextjs';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -21,6 +21,7 @@ const NavBar = () => {
     '/dashboard/settings': 'Settings',
     '/dashboard/courses': 'Courses',
     '/dashboard/notes': 'Notes',
+    '/dashboard/calendar': 'Calendar',
   };
 
   const currentTitle = routeTitles[pathname];
@@ -54,7 +55,13 @@ const NavBar = () => {
           </div>
 
           <BellIcon className='w-4 h-4 text-[#000000]' />
-          <Image src={user.imageUrl} alt='User avatar' width={40} height={40} className='rounded-full' />
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: "w-9 h-9 border border-neutral-200"
+              }
+            }}
+          />
         </div>
       </div>
     </section>
