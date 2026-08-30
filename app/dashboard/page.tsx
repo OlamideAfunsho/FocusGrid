@@ -7,6 +7,7 @@ import { getWeeklyStudyFocus } from '@/lib/supabase/queries';
 import WeeklyStudyCharts from './components/WeeklyStudyCharts';
 import QuickStartTimer from './components/QuickStartTimer';
 import FocusDistribution from './components/FocusDistribution';
+import UrgentTasks from './components/UrgentTasks';
 // import TopPriorityTasks from './components/TopPriorityTasks';
 
 export default async function DashboardPage() {
@@ -96,6 +97,10 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3">
         <div className="lg:col-span-1">
           <QuickStartTimer courses={courses} />
+        </div>
+
+        <div className="lg:col-span-2 mt-6 lg:mt-0 ml-0 lg:ml-6">
+          <UrgentTasks />
         </div>
 
         {/* <TopPriorityTasks /> */}

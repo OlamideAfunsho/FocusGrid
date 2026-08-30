@@ -7,9 +7,12 @@ import React from 'react'
 import NavLinks from './NavLinks'
 import { PlusIcon } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
+import { useClerk } from '@clerk/nextjs';
+import { LogOut } from 'lucide-react';
 
 const SideBar = () => {
   const { isSignedIn, user, isLoaded } = useUser();
+  const { signOut } = useClerk();
 
   if (!isLoaded) return <div>Loading...</div>;
 
@@ -37,6 +40,13 @@ const SideBar = () => {
           <h1 className='font-semibold text-[#3E3A72]'>{user?.fullName}</h1>
           <span className='text-[12px] text-[#3E3A72]'>{user?.primaryEmailAddress?.emailAddress ?? user?.emailAddresses?.[0]?.emailAddress ?? 'No email'}</span>
         </div>
+
+        <button
+            onClick={() => signOut({ redirectUrl: '/sign-in' })}
+            className=""
+          >
+            <LogOut className="w-4 h-4 text-neutral-400 hover:cursor-pointer hover:text-[#3399FF]" />
+          </button>
       </div>
     </div>
   )

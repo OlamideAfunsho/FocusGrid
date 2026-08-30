@@ -74,13 +74,13 @@ const Navbar = () => {
                 {/* Desktop Right */}
                 <div className="flex items-center gap-8">
                     
-                    <button className={`hidden lg:block text-[#6C7278] text-[16px] font-medium rounded-full ml-4 transition-all duration-500 cursor-pointer `}>
+                    <Link href='/sign-in' className={`hidden lg:block text-[#6C7278] text-[16px] font-medium rounded-full ml-4 transition-all duration-500 cursor-pointer `}>
                         Sign in
-                    </button>
+                    </Link>
 
-                    <button className={`hidden lg:block p-3 text-[16px] text-[#FFFFFF] font-semibold rounded-[8px] cursor-pointer shadow-[0px_7px_9.1px_0px_#C9C9FF9F] bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] `}>
+                    <Link href='/' className={`hidden lg:block p-3 text-[16px] text-[#FFFFFF] font-semibold rounded-[8px] cursor-pointer shadow-[0px_7px_9.1px_0px_#C9C9FF9F] bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] `}>
                         Get started for free
-                    </button>
+                    </Link>
                 </div>
 
                 {/* Mobile Menu Button */}
@@ -114,13 +114,13 @@ const Navbar = () => {
                         </Link>
                     ))}
 
-                    <button className="bg-black text-white px-6 py-2.5 rounded-full transition-all duration-500">
+                    <Link href='/sign-in' className="bg-black text-white px-6 py-2.5 rounded-full transition-all duration-500">
                         Login
-                    </button>
+                    </Link>
 
-                    <button className="border px-6 py-2.5 text-sm font-light rounded-full cursor-pointer transition-all">
+                    <Link href='/' className="border px-6 py-2.5 text-sm font-light rounded-full cursor-pointer transition-all">
                         Get started
-                    </button>
+                    </Link>
                     </motion.div>
                     )}
                 </AnimatePresence>
