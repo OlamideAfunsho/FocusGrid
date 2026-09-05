@@ -105,9 +105,24 @@ const Navbar = () => {
 
                 {/* Mobile Menu Button */}
                 <div className="flex items-center gap-8 lg:hidden">
-                    <button className={`hidden sm:block text-[#6C7278] text-[16px] font-medium rounded-full ml-4 transition-all duration-500 cursor-pointer `}>
-                        Sign in
-                    </button>
+                    {/* Shown when a user is logged out */}
+                    <Show when="signed-out">
+                        <SignInButton mode="modal" forceRedirectUrl="/dashboard">
+                            <button className={`hidden sm:block text-[#6C7278] text-[16px] font-medium rounded-full ml-4 hover:text-[#3399FF] transition-all duration-500 cursor-pointer `}>
+                            Sign In
+                            </button>
+                        </SignInButton>
+                    </Show>
+
+                    {/* Shown when user is already logged in */}
+                    <Show when="signed-in">
+                        <Link
+                            href="/dashboard"
+                            className={`hidden sm:block text-[#6C7278] text-[16px] font-medium rounded-full ml-4 hover:text-[#3399FF] transition-all duration-500 cursor-pointer `}
+                        >
+                            Dashboard
+                        </Link>
+                    </Show>
 
                     <button onClick={() => setIsMenuOpen(!isMenuOpen)}className='cursor-pointer'>
                         <Image src={hamburgerMenu} alt="Hamburger Menu" width={20} height={20} />
@@ -134,9 +149,17 @@ const Navbar = () => {
                         </Link>
                     ))}
 
-                    <Link href='/sign-in' className="bg-black text-white px-6 py-2.5 rounded-full transition-all duration-500">
-                        Login
-                    </Link>
+                    <Show when="signed-out">
+                        <Link href='/sign-in' className="bg-black text-white px-6 py-2.5 rounded-full transition-all duration-500">
+                            Login
+                        </Link>
+                    </Show>
+
+                    <Show when="signed-in">
+                        <Link href="/dashboard" className="bg-black text-white px-6 py-2.5 rounded-full transition-all duration-500">
+                            Dashboard
+                        </Link>
+                    </Show>
 
                     <Link href='/' className="border px-6 py-2.5 text-sm font-light rounded-full cursor-pointer transition-all">
                         Get started
