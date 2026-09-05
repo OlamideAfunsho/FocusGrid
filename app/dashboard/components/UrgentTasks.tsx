@@ -15,7 +15,7 @@ import { useSession } from '@clerk/nextjs';
 
 interface UrgentTask {
   id: string;
-  title: string;
+  task_title: string;
   due_date: string | null;
   priority: 'high' | 'medium' | 'low';
   is_completed: boolean;
@@ -75,13 +75,23 @@ export default function UrgentTasks() {
 
   // Handle instant completion checkmark
   const toggleTaskCompletion = async (taskId: string) => {
+    if (!session?.user?.id) return;
+
+    const previousTasks = [...tasks]; // Store previous state for rollback
     // Optimistic removal from UI list
     setTasks(prev => prev.filter(t => t.id !== taskId));
 
-    await supabase
+    const { error } = await supabase
       .from('tasks')
       .update({ is_completed: true, completed_at: new Date().toISOString() })
-      .eq('id', taskId);
+      .eq('id', taskId)
+      .eq('user_id', session.user.id);
+
+    if (error) {
+    console.error('Failed to update task completion:', error.message);
+    // Rollback UI if database update failed
+    setTasks(previousTasks);
+    }
   };
 
   // Dynamic urgency badge calculation based on date proximity
@@ -166,6 +176,7 @@ export default function UrgentTasks() {
           tasks.map((task) => (
             <div
               key={task.id}
+              onClick={() => toggleTaskCompletion(task.id)}
               className="py-3 flex items-center justify-between gap-3 group transition hover:bg-neutral-50/60 px-2 rounded-xl"
             >
               {/* Checkbox + Title */}
@@ -180,7 +191,7 @@ export default function UrgentTasks() {
 
                 <div className="truncate">
                   <p className="text-xs font-semibold text-neutral-800 truncate">
-                    {task.title}
+                    {task.task_title}
                   </p>
                   
                   {task.courses?.course_code && (
