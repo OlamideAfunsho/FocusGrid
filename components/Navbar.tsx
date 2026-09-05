@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
+import { Show, SignInButton } from '@clerk/nextjs';
 import logo from '../public/images/landing_page_images/logo.svg'
 import hamburgerMenu from '../public/images/landing_page_images/hamburger-menu.png'
 import closeMenu from '../public/images/landing_page_images/close-menu.svg'
@@ -73,10 +74,29 @@ const Navbar = () => {
 
                 {/* Desktop Right */}
                 <div className="flex items-center gap-8">
+
+                    {/* Shown when user is logged out */}
+                    <Show when="signed-out">
+                        <SignInButton mode="modal" forceRedirectUrl="/dashboard">
+                            <button className={`hidden lg:block text-[#6C7278] text-[16px] font-medium rounded-full ml-4 hover:text-[#3399FF] transition-all duration-500 cursor-pointer `}>
+                            Sign In
+                            </button>
+                        </SignInButton>
+                    </Show>
+
+                    {/* Shown when user is already logged in */}
+                    <Show when="signed-in">
+                        <Link
+                            href="/dashboard"
+                            className={`hidden lg:block text-[#6C7278] text-[16px] font-medium rounded-full ml-4 hover:text-[#3399FF] transition-all duration-500 cursor-pointer `}
+                        >
+                            Dashboard
+                        </Link>
+                    </Show>
                     
-                    <Link href='/sign-in' className={`hidden lg:block text-[#6C7278] text-[16px] font-medium rounded-full ml-4 transition-all duration-500 cursor-pointer `}>
+                    {/* <Link href='' className={`hidden lg:block text-[#6C7278] text-[16px] font-medium rounded-full ml-4 transition-all duration-500 cursor-pointer `}>
                         Sign in
-                    </Link>
+                    </Link> */}
 
                     <Link href='/' className={`hidden lg:block p-3 text-[16px] text-[#FFFFFF] font-semibold rounded-[8px] cursor-pointer shadow-[0px_7px_9.1px_0px_#C9C9FF9F] bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] `}>
                         Get started for free

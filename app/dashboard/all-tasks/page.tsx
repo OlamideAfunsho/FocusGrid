@@ -257,7 +257,7 @@ const page = () => {
       ) : (
         <div className='w-full md:w-3/5'>
           {tasks.map((task) => (
-            <div key={task.id} onClick={() => handleToggleCompletion(task.id, task.is_completed)} className={` flex items-center justify-between gap-4 bg-[#EEF2FF] border-l-4 border-[#3399FF] rounded-[8px] p-4 mb-4 cursor-pointer
+            <div key={task.id} onClick={() => handleToggleCompletion(task.id, task.is_completed)} className={`w-full flex items-center justify-between gap-4 bg-[#EEF2FF] border-l-4 border-[#3399FF] rounded-[8px] p-4 mb-4 cursor-pointer
               ${
                 task.is_completed ? 'opacity-60 bg-neutral-100' : ''
               }
