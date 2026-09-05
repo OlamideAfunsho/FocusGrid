@@ -176,7 +176,7 @@ const page = () => {
         <form onSubmit={handleCourseSubmit} className='mt-2 mb-4'>
            <div className='flex flex-col gap-2 mb-6'>
                 <div className='flex flex-col md:flex-row items-start md:items-center gap-0 md:gap-2'>
-                    <label className='text-[#8F98A3]'>Course Name:</label>
+                    <label className='text-[#6C7278]'>Course Name:</label>
                     <input
                         type="text"
                         className="h-12 w-full md:w-1/2 p-2 mt-2 border border-gray-500/30 rounded outline-none focus:border-indigo-300"
@@ -187,7 +187,7 @@ const page = () => {
                     />
                 </div>
                 <div className='flex flex-col md:flex-row items-start md:items-center gap-0 md:gap-3'>
-                    <label className='text-[#8F98A3]'>Course Code:</label>
+                    <label className='text-[#6C7278]'>Course Code:</label>
                     <input
                         type="text"
                         className="h-12 w-full md:w-1/2 p-2 mt-2 border border-gray-500/30 rounded outline-none focus:border-indigo-300"
@@ -207,7 +207,7 @@ const page = () => {
                 <p className='italic text-[#8F98A3]'>No courses added yet. Add a new course above.</p>
 
             ) : (
-                <div className='bg-[#EEF2FF] rounded-[8px] md:p-4 w-full md:w-3/5 overflow-x-auto'>
+                <div className='bg-[#EEF2FF] rounded-[8px] py-3 md:p-4 w-full md:w-3/5 overflow-x-auto'>
 
                     {/* <div className='flex flex-row justify-between'>
                         <div className='flex flex-col justify-center'>
@@ -230,15 +230,15 @@ const page = () => {
                     <table className='text-left'>
                             <thead>
                                 <tr>
-                                    <th className='text-[14px] md:text-[16px] px-4 py-2'>Course Name</th>
-                                    <th className='text-[14px] md:text-[16px] px-4 py-2'>Course Code</th>
-                                    <th className='text-[14px] md:text-[16px] px-4 py-2'>Action</th>
+                                    <th className='text-[14px] text-[#3E3A72] md:text-[16px] px-4 py-2'>Course Name</th>
+                                    <th className='text-[14px] text-[#3E3A72] md:text-[16px] px-4 py-2'>Course Code</th>
+                                    <th className='text-[14px] text-[#3E3A72] md:text-[16px] px-4 py-2'>Action</th>
                                 </tr>
                             </thead>
 
                             <tbody className='text-[12px] md:text-[14px]'>
                                 {courses.map((course) => (
-                                        <tr key={course.id} className=''>
+                                        <tr key={course.id} className='text-[#3E3A72]'>
                                             <td className='px-4 py-1'>{course.name}</td>
                                             <td className='px-4 py-1'>{course.course_code}</td>
                                             <td className='px-4 py-1'>

@@ -23,10 +23,10 @@ const WeeklyStudyCharts = ({ data }: WeeklyStudyChartsProps) => {
     <>
     <div className="w-full rounded-[8px] p-5 shadow-[0_0_40px_5px_rgba(0,0,0,0.1)]">
       <div className="mb-4">
-        <h3 className="text-base font-semibold ">
+        <h3 className="text-base font-semibold text-[#3E3A72]">
           Study Analytics
         </h3>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-[#6C7278]">
           Your productive insights for this week
         </p>
       </div>

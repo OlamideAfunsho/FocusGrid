@@ -9,7 +9,7 @@ const page = () => {
     <h1 className="text-2xl">
         Academic <span className="text-[#3399FF]">Schedule</span>
     </h1>
-    <p className="text-sm text-neutral-500 mt-1">
+    <p className="text-sm text-[#6C7278] mt-1">
         Visualize upcoming assignment deadlines, exam milestones, and planned study blocks in one central timeline.
     </p>
     

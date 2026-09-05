@@ -191,7 +191,7 @@ const NotesPage = () => {
           <h1 className="text-2xl">
             Notes
           </h1>
-          <p className="text-sm text-neutral-500 mt-1">
+          <p className="text-sm text-[#6C7278] mt-1">
             Capture, organize, and review your lecture notes and course summaries.
           </p>
         </div>
@@ -208,7 +208,7 @@ const NotesPage = () => {
       {/* Filter and Search Bar */}
       <div className="flex flex-col md:flex-row gap-3 items-center justify-between mt-4 mb-4">
         <div className="relative w-full md:w-96">
-          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8F98A3]" />
           <input
             type="text"
             placeholder="Search notes by title or keyword..."
@@ -219,7 +219,7 @@ const NotesPage = () => {
         </div>
 
         <div className="w-full md:w-auto flex items-center gap-2">
-          <label className="text-xs font-semibold text-neutral-500 whitespace-nowrap">
+          <label className="text-xs font-semibold text-[#3E3A72] whitespace-nowrap">
             Filter by Course:
           </label>
           <select
@@ -243,8 +243,8 @@ const NotesPage = () => {
       ) : filteredNotes.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 bg-neutral-50 border border-dashed border-neutral-200 rounded-2xl text-center">
           <BookOpenIcon className="w-12 h-12 text-neutral-300 mb-3" />
-          <h3 className="text-lg font-semibold text-neutral-700">No notes found</h3>
-          <p className="text-sm text-neutral-400 max-w-sm mt-1">
+          <h3 className="text-lg font-semibold text-[#3E3A72]">No notes found</h3>
+          <p className="text-sm text-[#8F98A3] max-w-sm mt-1">
             Try adjusting your search criteria or create a new note for your classes.
           </p>
         </div>
@@ -268,7 +268,7 @@ const NotesPage = () => {
                         e.stopPropagation(); // Prevent opening the view modal    
                         openEditModal(note);
                       }}
-                      className="p-1.5 text-neutral-400 cursor-pointer hover:text-[#3399FF] rounded-lg transition"
+                      className="p-1.5 text-[#8F98A3] cursor-pointer hover:text-[#3399FF] rounded-lg transition"
                       title="Edit Note"
                     >
                       <PencilIcon className="w-4 h-4" />
@@ -278,7 +278,7 @@ const NotesPage = () => {
                         e.stopPropagation();
                         handleDeleteNote(note.id);
                       }}
-                      className="p-1.5 text-neutral-400 cursor-pointer hover:text-red-500 rounded-lg transition"
+                      className="p-1.5 text-[#8F98A3] cursor-pointer hover:text-red-500 rounded-lg transition"
                       title="Delete Note"
                     >
                       <Trash2Icon className="w-4 h-4" />
@@ -294,7 +294,7 @@ const NotesPage = () => {
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-400">
+              <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#8F98A3]">
                 <span className="truncate max-w-[180px]">{note.courses?.name ?? 'No Course'}</span>
                 <span className="flex items-center gap-1">
                   <CalendarIcon className="w-3 h-3" />
@@ -329,7 +329,7 @@ const NotesPage = () => {
                       <BookOpenIcon className="w-3.5 h-3.5" />
                       {viewingNote.courses?.course_code ?? 'No Course'}
                     </span>
-                    <span className="text-xs text-neutral-400 truncate max-w-[180px]">
+                    <span className="text-xs text-[#8F98A3] truncate max-w-[180px]">
                       {viewingNote.courses?.name}
                     </span>
                   </div>
@@ -340,7 +340,7 @@ const NotesPage = () => {
 
                 <button
                   onClick={() => setViewingNote(null)}
-                  className="text-neutral-400 hover:text-neutral-600 p-1.5 rounded-lg cursor-pointer hover:bg-neutral-200/60 transition"
+                  className="text-[#8F98A3] hover:text-neutral-600 p-1.5 rounded-lg cursor-pointer hover:bg-neutral-200/60 transition"
                 >
                   <XIcon className="w-5 h-5" />
                 </button>
@@ -355,7 +355,7 @@ const NotesPage = () => {
 
               {/* Fixed Footer */}
               <div className="p-4 border-t border-neutral-100 bg-white flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-xs text-neutral-400">
+                <div className="flex items-center gap-1.5 text-xs text-[#8F98A3]">
                   <CalendarIcon className="w-3.5 h-3.5" />
                   <span>
                     Created {new Date(viewingNote.created_at).toLocaleDateString(undefined, {
@@ -406,7 +406,7 @@ const NotesPage = () => {
               </h2>
               <button
                 onClick={closeModal}
-                className="text-neutral-400 cursor-pointer hover:text-neutral-600 p-1"
+                className="text-[#8F98A3] cursor-pointer hover:text-neutral-600 p-1"
               >
                 <XIcon className="w-5 h-5" />
               </button>

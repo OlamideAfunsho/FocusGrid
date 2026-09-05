@@ -78,7 +78,7 @@ function TimerContent() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-2xl">Study <span className="text-[#3399FF]">Timer</span></h1>
-            <p className="text-sm text-neutral-500 mt-1">
+            <p className="text-sm text-[#6C7278] mt-1">
               Track pomodoro intervals and log study time directly to your courses.
             </p>
           </div>
@@ -86,11 +86,11 @@ function TimerContent() {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-neutral-200 rounded-xl shadow-sm">
               <ClockIcon className="w-4 h-4 text-[#3399FF]" />
-              <span className="text-xs font-semibold text-neutral-700">{todayPomodoroMinutes}m Today</span>
+              <span className="text-xs font-semibold text-[#3E3A72]">{todayPomodoroMinutes}m Today</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-neutral-200 rounded-xl shadow-sm">
               <FlameIcon className="w-4 h-4 text-orange-500" />
-              <span className="text-xs font-semibold text-neutral-700">{completedSessionsCount} Sessions</span>
+              <span className="text-xs font-semibold text-[#3E3A72]">{completedSessionsCount} Sessions</span>
             </div>
           </div>
         </div>
@@ -100,7 +100,7 @@ function TimerContent() {
         
         <button
           onClick={() => setIsFullscreen(!isFullscreen)}
-          className="absolute top-4 right-4 p-2 text-neutral-400 hover:text-neutral-600 rounded-lg transition"
+          className="absolute top-4 right-4 p-2 text-[#8F98A3] hover:text-[#6C7278] cursor-pointer rounded-lg transition"
           title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen Pomodoro'}
         >
           {isFullscreen ? <Minimize2Icon className="w-5 h-5" /> : <Maximize2Icon className="w-5 h-5" />}
@@ -113,8 +113,8 @@ function TimerContent() {
               onClick={() => switchMode(m)}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
                 mode === m 
-                  ? 'bg-white text-neutral-900 shadow-sm' 
-                  : 'text-neutral-500 hover:text-neutral-800'
+                  ? 'bg-white text-[#3E3A72] shadow-sm' 
+                  : 'text-[#6C7278] hover:text-[#3E3A72]'
               }`}
             >
               {MODE_CONFIGS[m].label}
@@ -124,11 +124,11 @@ function TimerContent() {
 
         <div className="mb-6 w-full max-w-xs">
           <div className="relative">
-            <BookOpenIcon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+            <BookOpenIcon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8F98A3]" />
             <select
               value={selectedCourseId}
               onChange={(e) => setSelectedCourseId(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs font-medium text-neutral-700 focus:outline-none focus:ring-2 focus:ring-[#3399FF]"
+              className="w-full pl-9 pr-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs font-medium text-[#3E3A72] focus:outline-none focus:ring-2 focus:ring-[#3399FF]"
             >
               <option value="">-- Tag a Course (Optional) --</option>
               {courses.map((course) => (
@@ -168,7 +168,7 @@ function TimerContent() {
             <span className="text-5xl font-mono font-bold tracking-tight">
               {formatTime(timeLeft)}
             </span>
-            <span className="text-xs uppercase tracking-wider font-semibold text-neutral-400 mt-2">
+            <span className="text-xs uppercase tracking-wider font-semibold text-[#8F98A3] mt-2">
               {MODE_CONFIGS[mode].label}
             </span>
           </div>
@@ -192,10 +192,10 @@ function TimerContent() {
 
           <button
             onClick={resetTimer}
-            className="p-3 bg-neutral-100 text-neutral-600 hover:bg-neutral-200 rounded-xl transition"
+            className="p-3 bg-neutral-100 text-[#6C7278] hover:bg-neutral-200 rounded-xl transition"
             title="Reset Timer"
           >
-            <RotateCcwIcon className="w-5 h-5" />
+            <RotateCcwIcon className="w-5 h-5 cursor-pointer" />
           </button>
         </div>
       </div>
@@ -205,7 +205,7 @@ function TimerContent() {
 
 export default function StudyTimer() {
   return (
-    <Suspense fallback={<div className="p-6 text-neutral-400">Loading study timer...</div>}>
+    <Suspense fallback={<div className="p-6 text-[#8F98A3]">Loading study timer...</div>}>
       <TimerContent />
     </Suspense>
   );

@@ -55,12 +55,12 @@ const NavLinks = () => {
       icon: CalendarIcon
     },
 
-    {
-      name: 'Settings',
-      mobileName: 'Settings',
-      path: '/dashboard/settings',
-      icon: SettingsIcon
-    }
+    // {
+    //   name: 'Settings',
+    //   mobileName: 'Settings',
+    //   path: '/dashboard/settings',
+    //   icon: SettingsIcon
+    // }
   ]
 
   const pathname = usePathname();

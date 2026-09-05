@@ -145,8 +145,8 @@ export default function UrgentTasks() {
             <CheckSquareIcon className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-neutral-900">Urgent Tasks</h3>
-            <p className="text-xs text-neutral-500">Prioritized by upcoming deadlines</p>
+            <h3 className="text-base font-semibold text-[#3E3A72]">Urgent Tasks</h3>
+            <p className="text-xs text-[#6C7278]">Prioritized by upcoming deadlines</p>
           </div>
         </div>
 
@@ -161,14 +161,14 @@ export default function UrgentTasks() {
       {/* Task List */}
       <div className="py-2 flex-1 divide-y divide-neutral-100">
         {isLoading ? (
-          <div className="py-12 text-center text-xs text-neutral-400">
+          <div className="py-12 text-center text-xs text-[#8F98A3]">
             Fetching urgent task list...
           </div>
         ) : tasks.length === 0 ? (
           <div className="py-10 text-center flex flex-col items-center justify-center">
             <CheckCircle2Icon className="w-9 h-9 text-emerald-500/80 mb-2" />
-            <p className="text-xs font-semibold text-neutral-800">All caught up!</p>
-            <p className="text-[11px] text-neutral-400 mt-0.5">
+            <p className="text-xs font-semibold text-[#3E3A72]">All caught up!</p>
+            <p className="text-[11px] text-[#8F98A3] mt-0.5">
               No pending urgent tasks right now.
             </p>
           </div>
@@ -190,12 +190,12 @@ export default function UrgentTasks() {
                 </button>
 
                 <div className="truncate">
-                  <p className="text-xs font-semibold text-neutral-800 truncate">
+                  <p className="text-xs font-semibold text-[#3E3A72] truncate">
                     {task.task_title}
                   </p>
                   
                   {task.courses?.course_code && (
-                    <span className="text-[10px] font-medium text-neutral-400 uppercase tracking-wider">
+                    <span className="text-[10px] font-medium text-[#8F98A3] uppercase tracking-wider">
                       {task.courses.course_code}
                     </span>
                   )}

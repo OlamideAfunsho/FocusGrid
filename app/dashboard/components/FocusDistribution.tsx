@@ -120,25 +120,25 @@ const FocusDistribution = () => {
             <PieChartIcon className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-neutral-900">Focus Distribution</h3>
-            <p className="text-xs text-neutral-500">Time split per course (Last 7 Days)</p>
+            <h3 className="text-base font-semibold text-[#3E3A72]">Focus Distribution</h3>
+            <p className="text-xs text-[#6C7278]">Time split per course (Last 7 Days)</p>
           </div>
         </div>
-        <span className="text-xs font-semibold px-2.5 py-1 bg-neutral-100 text-neutral-600 rounded-lg">
+        <span className="text-xs font-semibold px-2.5 py-1 bg-neutral-100 text-[#6C7278] rounded-lg">
           {formatHours(totalMinutes)} Total
         </span>
       </div>
 
       {/* Content State Handling */}
       {isLoading ? (
-        <div className="flex-1 flex items-center justify-center py-12 text-xs text-neutral-400">
+        <div className="flex-1 flex items-center justify-center py-12 text-xs text-[#6C7278]">
           Calculating course metrics...
         </div>
       ) : distribution.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center py-10 text-center">
           <BookOpenIcon className="w-10 h-10 text-neutral-300 mb-2" />
-          <p className="text-xs font-medium text-neutral-600">No tagged study time yet</p>
-          <p className="text-[11px] text-neutral-400 max-w-[200px] mt-1">
+          <p className="text-xs font-medium text-[#6C7278]">No tagged study time yet</p>
+          <p className="text-[11px] text-[#8F98A3] max-w-[200px] mt-1">
             Tag your timer sessions to a course to see your focus distribution.
           </p>
         </div>
@@ -179,10 +179,10 @@ const FocusDistribution = () => {
               })}
             </svg>
             <div className="absolute flex flex-col items-center text-center">
-              <span className="text-xl font-bold text-neutral-900 font-mono">
+              <span className="text-xl font-bold text-[#3E3A72] font-mono">
                 {distribution[0]?.percentage || 0}%
               </span>
-              <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider">
+              <span className="text-[10px] font-semibold text-[#8F98A3] uppercase tracking-wider">
                 Top Focus
               </span>
             </div>
@@ -201,15 +201,15 @@ const FocusDistribution = () => {
                     <p className="font-semibold text-neutral-800 leading-tight truncate">
                       {item.courseCode}
                     </p>
-                    <p className="text-[10px] text-neutral-400 truncate">{item.name}</p>
+                    <p className="text-[10px] text-[#8F98A3] truncate">{item.name}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 shrink-0">
-                  <span className="font-mono text-neutral-500 text-[11px]">
+                  <span className="font-mono text-[#8F98A3] text-[11px]">
                     {formatHours(item.minutes)}
                   </span>
-                  <span className="font-semibold text-neutral-900 w-8 text-right font-mono">
+                  <span className="font-semibold text-[#8F98A3] w-8 text-right font-mono">
                     {item.percentage}%
                   </span>
                 </div>

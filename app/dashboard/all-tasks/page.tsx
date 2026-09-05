@@ -272,9 +272,9 @@ const page = () => {
                 />
               
                 <div>
-                  <h2 className="text-[16px] md:text-lg font-semibold">{task.task_title}</h2>
-                  <p className="text-[12px] md:text-sm text-[#8F98A3]">Due: {new Date(task.due_date).toLocaleDateString()}</p>
-                  <p className="text-[12px] md:text-sm text-[#8F98A3]">Course: {task.courses?.name ?? 'Unassigned'}</p>
+                  <h2 className="text-base text-[#3E3A72] md:text-lg font-semibold">{task.task_title}</h2>
+                  <p className="text-xs md:text-sm text-[#8F98A3]">Due: {new Date(task.due_date).toLocaleDateString()}</p>
+                  <p className="text-xs md:text-sm text-[#8F98A3]">Course: {task.courses?.name ?? 'Unassigned'}</p>
                 </div>
               </div>
 
