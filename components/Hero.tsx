@@ -23,8 +23,8 @@ const Hero = () => {
             Your Academic Life, <br />{" "}
             <span className="text-[#3399ff]">Organized</span>
           </h1>
-          <p className="w-full mt-2 text-[20px] text-[#6C7278] leading-9 text-center xl:text-left">
-            Stop juggling multiple apps and scatterd notes. FocusGrid brings your tasks, assignments, deadlines, and study sessions into one powerful platform designed specifically for students.
+          <p className="w-full mt-2 text-[16px] lg:text-[20px] text-[#6C7278] leading-9 text-center xl:text-left">
+            Stop juggling multiple apps and scattered notes. FocusGrid brings your tasks, assignments, deadlines, and study sessions into one powerful platform designed specifically for students.
           </p>
 
           {/* CTA Buttons */}

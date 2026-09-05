@@ -54,11 +54,11 @@ const Features = () => {
               <div className="flex items-start gap-2 mb-[18px]">
                 <Image src={checkMark} alt="check-mark" className="" />
                 <h1>
-                  <span className="text-[16px] font-medium text-[#565758] mb-2">
+                  <span className="text-[16px] font-semibold text-[#565758] mb-2">
                     Smart Course Grouping
                   </span>{" "}
                   <br />
-                  <span className="text-[16px] text-[#6C7278]">
+                  <span className="text-[16px] text-[#8F98A3]">
                     Automatically organize tasks by course with color coding
                   </span>
                 </h1>
@@ -67,11 +67,11 @@ const Features = () => {
               <div className="flex items-start gap-2 mb-[18px]">
                 <Image src={checkMark} alt="check-mark" className="" />
                 <h1>
-                  <span className="text-[16px] font-medium text-[#565758] mb-2">
+                  <span className="text-[16px] font-semibold text-[#565758] mb-2">
                     Priority Management
                   </span>{" "}
                   <br />
-                  <span className="text-[16px] text-[#6C7278]">
+                  <span className="text-[16px] text-[#8F98A3]">
                     Tag tags as urgent, important, or routine.
                   </span>
                 </h1>
@@ -80,11 +80,11 @@ const Features = () => {
               <div className="flex items-start gap-2">
                 <Image src={checkMark} alt="check-mark" className="" />
                 <h1>
-                  <span className="text-[16px] font-medium text-[#565758] mb-2">
+                  <span className="text-[16px] font-semibold text-[#565758] mb-2">
                     Deadline Reminders
                   </span>{" "}
                   <br />
-                  <span className="text-[16px] text-[#6C7278]">
+                  <span className="text-[16px] text-[#8F98A3]">
                     Never miss an assignment with smart notifications.
                   </span>
                 </h1>
@@ -112,11 +112,11 @@ const Features = () => {
               <div className="flex items-start gap-2 mb-[18px]">
                 <Image src={checkMark} alt="check-mark" className="" />
                 <h1>
-                  <span className="text-[16px] font-medium text-[#565758] mb-2">
+                  <span className="text-[16px] font-semibold text-[#565758] mb-2">
                     Customizable Sessions
                   </span>{" "}
                   <br />
-                  <span className="text-[16px] text-[#6C7278]">
+                  <span className="text-[16px] text-[#8F98A3]">
                     Set your own focus and break durations
                   </span>
                 </h1>
@@ -125,11 +125,11 @@ const Features = () => {
               <div className="flex items-start gap-2 mb-[18px]">
                 <Image src={checkMark} alt="check-mark" className="" />
                 <h1>
-                  <span className="text-[16px] font-medium text-[#565758] mb-2">
+                  <span className="text-[16px] font-semibold text-[#565758] mb-2">
                     Study Statistics
                   </span>{" "}
                   <br />
-                  <span className="text-[16px] text-[#6C7278]">
+                  <span className="text-[16px] text-[#8F98A3]">
                     Track total study hours per course and week
                   </span>
                 </h1>
@@ -138,11 +138,11 @@ const Features = () => {
               <div className="flex items-start gap-2">
                 <Image src={checkMark} alt="check-mark" className="" />
                 <h1>
-                  <span className="text-[16px] font-medium text-[#565758] mb-2">
+                  <span className="text-[16px] font-semibold text-[#565758] mb-2">
                     Break Reminders
                   </span>{" "}
                   <br />
-                  <span className="text-[16px] text-[#6C7278]">
+                  <span className="text-[16px] text-[#8F98A3]">
                     Gentle nudges to take breaks and stay fresh
                   </span>
                 </h1>
@@ -182,11 +182,11 @@ const Features = () => {
               <div className="flex items-start gap-2 mb-[18px]">
                 <Image src={checkMark} alt="check-mark" className="" />
                 <h1>
-                  <span className="text-[16px] font-medium text-[#565758] mb-2">
+                  <span className="text-[16px] font-semibold text-[#565758] mb-2">
                     Rich Text Editor
                   </span>{" "}
                   <br />
-                  <span className="text-[16px] text-[#6C7278]">
+                  <span className="text-[16px] text-[#8F98A3]">
                     Format notes with headers , lists, and highlights
                   </span>
                 </h1>
@@ -195,11 +195,11 @@ const Features = () => {
               <div className="flex items-start gap-2 mb-[18px]">
                 <Image src={checkMark} alt="check-mark" className="" />
                 <h1>
-                  <span className="text-[16px] font-medium text-[#565758] mb-2">
+                  <span className="text-[16px] font-semibold text-[#565758] mb-2">
                     Quick Capture
                   </span>{" "}
                   <br />
-                  <span className="text-[16px] text-[#6C7278]">
+                  <span className="text-[16px] text-[#8F98A3]">
                     Jot down ideas instantly during lectures
                   </span>
                 </h1>
@@ -208,11 +208,11 @@ const Features = () => {
               <div className="flex items-start gap-2">
                 <Image src={checkMark} alt="check-mark" className="" />
                 <h1>
-                  <span className="text-[16px] font-medium text-[#565758] mb-2">
+                  <span className="text-[16px] font-semibold text-[#565758] mb-2">
                     Powerful search
                   </span>{" "}
                   <br />
-                  <span className="text-[16px] text-[#6C7278]">
+                  <span className="text-[16px] text-[#8F98A3]">
                     Find any note across all course instantly
                   </span>
                 </h1>
