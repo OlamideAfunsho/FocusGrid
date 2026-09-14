@@ -8,6 +8,7 @@ import { Show, SignInButton } from '@clerk/nextjs';
 import logo from '../public/images/landing_page_images/logo.svg'
 import hamburgerMenu from '../public/images/landing_page_images/hamburger-menu.png'
 import closeMenu from '../public/images/landing_page_images/close-menu.svg'
+import AuthCtaButton from './AuthCtaButton'
 
 // const Navbar = () => {
 //   return (
@@ -98,9 +99,11 @@ const Navbar = () => {
                         Sign in
                     </Link> */}
 
-                    <Link href='/' className={`hidden lg:block p-3 text-[16px] text-[#FFFFFF] font-semibold rounded-[8px] cursor-pointer shadow-[0px_7px_9.1px_0px_#C9C9FF9F] bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] `}>
-                        Get started for free
-                    </Link>
+                    {/* Hidden when signed in, since the Dashboard link above covers it */}
+                    <AuthCtaButton
+                        hideWhenSignedIn
+                        className={`hidden lg:block p-3 text-[16px] text-[#FFFFFF] font-semibold rounded-[8px] cursor-pointer shadow-[0px_7px_9.1px_0px_#C9C9FF9F] bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] `}
+                    />
                 </div>
 
                 {/* Mobile Menu Button */}
@@ -138,7 +141,7 @@ const Navbar = () => {
                         animate={{ x: 0 }}
                         exit={{ x: "100%" }}
                         transition={{ duration: 0.5, ease: "easeInOut" }} 
-                    className={`fixed top-0 left-0 w-full h-screen bg-white/10 backdrop-blur-sm text-base flex flex-col lg:hidden items-center justify-center gap-6 font-medium text-gray-800 transition-all duration-500 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
+                    className={`fixed top-0 left-0 w-full h-screen bg-white/95 backdrop-blur-md text-base flex flex-col lg:hidden items-center justify-center gap-6 font-medium text-gray-800 transition-all duration-500 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
                     <button className="absolute top-5 sm:top-8 right-4 md:right-8 cursor-pointer" onClick={() => setIsMenuOpen(false)}>
                         <Image src={closeMenu} alt="Close Menu" width={20} height={20} />
                     </button>
@@ -161,9 +164,11 @@ const Navbar = () => {
                         </Link>
                     </Show>
 
-                    <Link href='/' className="border px-6 py-2.5 text-sm font-light rounded-full cursor-pointer transition-all">
-                        Get started
-                    </Link>
+                    <AuthCtaButton
+                        hideWhenSignedIn
+                        signedOutLabel="Get started"
+                        className="border px-6 py-2.5 text-sm font-light rounded-full cursor-pointer transition-all"
+                    />
                     </motion.div>
                     )}
                 </AnimatePresence>

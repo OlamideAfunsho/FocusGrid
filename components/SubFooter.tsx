@@ -3,6 +3,7 @@ import Image from 'next/image'
 import arrowIcon from "../public/images/landing_page_images/arrow-right-02.svg";
 import playIcon from "../public/images/landing_page_images/play-icon-02.svg";
 import dashboardImage from "../public/images/landing_page_images/dashboard-image.png";
+import AuthCtaButton from './AuthCtaButton';
 
 const SubFooter = () => {
   return (
@@ -13,10 +14,12 @@ const SubFooter = () => {
             <p className='text-[18px] sm:text-[20px] text-white mb-6'>Join 50, 000+ students who are staying organized and achieving their goals with FocusGrid</p>
 
             <div className='flex gap-4 w-full justify-center md:justify-start'>
-                <button className='flex items-center gap-2 rounded-[8px] p-3 bg-[#FFFFFF] cursor-pointer hover:gap-3 transition duration-500'>
-                    <span className='text-[14px] sm:text-[16px] text-[#3399FF] font-semibold'>Start Free Trial</span>
+                <AuthCtaButton
+                    className='flex items-center gap-2 rounded-[8px] p-3 bg-[#FFFFFF] cursor-pointer hover:gap-3 transition duration-500'
+                    labelClassName='text-[14px] sm:text-[16px] text-[#3399FF] font-semibold'
+                >
                     <Image src={arrowIcon} alt="Arrow" className='w-4 h-4 sm:w-6 sm:h-6'/>
-                </button>
+                </AuthCtaButton>
                 <button className='flex items-center gap-2 rounded-[8px] p-3 border-2 border-[#FFFFFF] cursor-pointer hover:gap-3 transition duration-500'>
                     <Image src={playIcon} alt="Play" className='w-4 h-4 sm:w-6 sm:h-6'/>
                     <span className='text-[14px] sm:text-[16px] text-[#FFFFFF] font-semibold'>Watch Demo</span>

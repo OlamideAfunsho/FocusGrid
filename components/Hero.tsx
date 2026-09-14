@@ -4,6 +4,7 @@ import React from "react";
 // import heroImage from "../public/images/landing_page_images/hero-image.jpg";
 import arrowRight from '../public/images/landing_page_images/arrow-right.svg'
 import WatchDemoButton from "./WatchDemoButton";
+import AuthCtaButton from "./AuthCtaButton";
 import avatars from '../public/images/landing_page_images/avatars-group.svg'
 import stars from '../public/images/landing_page_images/stars-group.svg'
 import dashboardImage from '../public/images/landing_page_images/dashboard-image.svg'
@@ -29,10 +30,12 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row justify-center xl:justify-self-start gap-4 mt-6">
-            <button className="flex gap-3 items-center justify-center bg-[#3399ff] text-white p-3 rounded-[8px] cursor-pointer shadow-[0px_7px_9.1px_0px_#C9C9FF9F] bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)]">
-              <span className="text-[16px] font-semibold ">Start Free trial</span>
+            <AuthCtaButton
+              className="flex gap-3 items-center justify-center bg-[#3399ff] text-white p-3 rounded-[8px] cursor-pointer shadow-[0px_7px_9.1px_0px_#C9C9FF9F] bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)]"
+              labelClassName="text-[16px] font-semibold"
+            >
               <Image src={arrowRight} alt="arrow-right" width={24} />
-            </button>
+            </AuthCtaButton>
             <WatchDemoButton />
           </div>
 
