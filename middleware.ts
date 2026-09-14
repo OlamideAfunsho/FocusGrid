@@ -4,8 +4,12 @@ import { NextResponse } from "next/server";
 const isProtectedRoute = createRouteMatcher(["/dashboard(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) await auth().protect();
+  // 1. Protect routes requiring authentication
+  if (isProtectedRoute(req)) {
+    await auth.protect();
+  }
 
+  // 2. Clear stale handshake cookies if present
   if (req.cookies.has("__clerk_handshake")) {
     const response = NextResponse.next();
     response.cookies.delete("__clerk_handshake");
