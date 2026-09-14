@@ -50,9 +50,10 @@ export default function UrgentTasks() {
           id,
           task_title,
           due_date,
+          priority,
           is_completed,
           course_id,
-          courses:tasks_course_id_fkey (
+          courses (
             course_code
           )
         `)
@@ -73,12 +74,10 @@ export default function UrgentTasks() {
     fetchUrgentTasks();
   }, [isLoaded, session, supabase]);
 
-  // Handle instant completion checkmark
   const toggleTaskCompletion = async (taskId: string) => {
     if (!session?.user?.id) return;
 
-    const previousTasks = [...tasks]; // Store previous state for rollback
-    // Optimistic removal from UI list
+    const previousTasks = [...tasks];
     setTasks(prev => prev.filter(t => t.id !== taskId));
 
     const { error } = await supabase
@@ -88,22 +87,22 @@ export default function UrgentTasks() {
       .eq('user_id', session.user.id);
 
     if (error) {
-    console.error('Failed to update task completion:', error.message);
-    // Rollback UI if database update failed
-    setTasks(previousTasks);
+      console.error('Failed to update task completion:', error.message);
+      setTasks(previousTasks);
     }
   };
 
-  // Dynamic urgency badge calculation based on date proximity
   const getUrgencyBadge = (dueDateString: string | null) => {
     if (!dueDateString) return null;
 
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    const due = new Date(dueDateString);
-    due.setHours(0, 0, 0, 0);
+    const [year, month, day] = dueDateString.split('T')[0].split('-').map(Number);
+    const dueLocal = new Date(year, month - 1, day);
+    
+    const nowLocal = new Date();
+    nowLocal.setHours(0, 0, 0, 0);
 
-    const diffDays = Math.ceil((due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    const diffMs = dueLocal.getTime() - nowLocal.getTime();
+    const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
 
     if (diffDays < 0) {
       return (
@@ -138,7 +137,6 @@ export default function UrgentTasks() {
 
   return (
     <div className="bg-white rounded-[8px] p-5 shadow-[0_0_40px_5px_rgba(0,0,0,0.1)] flex flex-col justify-between h-full">
-      {/* Widget Header */}
       <div className="flex items-center justify-between pb-4 border-b border-neutral-100">
         <div className="flex items-center gap-2.5">
           <div className="p-2 bg-blue-50 text-[#3399FF] rounded-xl">
@@ -158,7 +156,6 @@ export default function UrgentTasks() {
         </Link>
       </div>
 
-      {/* Task List */}
       <div className="py-2 flex-1 divide-y divide-neutral-100">
         {isLoading ? (
           <div className="py-12 text-center text-xs text-[#8F98A3]">
@@ -177,12 +174,14 @@ export default function UrgentTasks() {
             <div
               key={task.id}
               onClick={() => toggleTaskCompletion(task.id)}
-              className="py-3 flex items-center justify-between gap-3 group transition hover:bg-neutral-50/60 px-2 rounded-xl"
+              className="py-3 flex items-center justify-between gap-3 group transition hover:bg-neutral-50/60 px-2 rounded-xl cursor-pointer"
             >
-              {/* Checkbox + Title */}
               <div className="flex items-center gap-3 min-w-0">
                 <button
-                  onClick={() => toggleTaskCompletion(task.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleTaskCompletion(task.id);
+                  }}
                   className="text-neutral-300 hover:text-[#3399FF] transition shrink-0"
                   title="Mark as Complete"
                 >
@@ -202,19 +201,18 @@ export default function UrgentTasks() {
                 </div>
               </div>
 
-              {/* Badges */}
               <div className="flex items-center gap-2 shrink-0">
-                {/* Urgency status */}
                 {getUrgencyBadge(task.due_date)}
 
-                {/* Priority Pill */}
-                <span
-                  className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-md border ${
-                    PRIORITY_STYLES[task.priority]
-                  }`}
-                >
-                  {task.priority}
-                </span>
+                {task.priority && (
+                  <span
+                    className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-md border ${
+                      PRIORITY_STYLES[task.priority] ?? PRIORITY_STYLES.low
+                    }`}
+                  >
+                    {task.priority}
+                  </span>
+                )}
               </div>
             </div>
           ))

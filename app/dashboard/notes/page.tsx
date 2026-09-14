@@ -286,10 +286,10 @@ const NotesPage = () => {
                   </div>
                 </div>
 
-                <h3 className="font-semibold text-base text-neutral-900 line-clamp-1 mb-2">
+                <h3 className="font-semibold text-base text-[#3E3A72] line-clamp-1 mb-2">
                   {note.title}
                 </h3>
-                <p className="text-xs text-neutral-600 line-clamp-4 leading-relaxed mb-4">
+                <p className="text-xs text-[#6C7278] line-clamp-4 leading-relaxed mb-4">
                   {note.content}
                 </p>
               </div>
@@ -333,14 +333,14 @@ const NotesPage = () => {
                       {viewingNote.courses?.name}
                     </span>
                   </div>
-                  <h2 className="text-xl font-bold text-neutral-900 leading-snug">
+                  <h2 className="text-xl font-bold text-[#3E3A72] leading-snug">
                     {viewingNote.title}
                   </h2>
                 </div>
 
                 <button
                   onClick={() => setViewingNote(null)}
-                  className="text-[#8F98A3] hover:text-neutral-600 p-1.5 rounded-lg cursor-pointer hover:bg-neutral-200/60 transition"
+                  className="text-[#8F98A3] hover:text-[#6C7278] p-1.5 rounded-lg cursor-pointer hover:bg-neutral-200/60 transition"
                 >
                   <XIcon className="w-5 h-5" />
                 </button>
@@ -380,7 +380,7 @@ const NotesPage = () => {
                   </button>
                   <button
                     onClick={() => setViewingNote(null)}
-                    className="px-3.5 py-1.5 rounded-[8px] text-xs font-medium text-neutral-600 bg-neutral-100 cursor-pointer hover:bg-neutral-200 transition"
+                    className="px-3.5 py-1.5 rounded-[8px] text-xs font-medium text-[#6C7278] bg-neutral-100 cursor-pointer hover:bg-neutral-200 transition"
                   >
                     Close
                   </button>
@@ -401,12 +401,12 @@ const NotesPage = () => {
           />
           <div className="relative bg-white w-full max-w-xl rounded-2xl p-6 shadow-2xl border border-neutral-100">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-neutral-900">
+              <h2 className="text-xl font-bold text-[#3E3A72]">
                 {activeNote ? 'Edit Class Note' : 'Create New Class Note'}
               </h2>
               <button
                 onClick={closeModal}
-                className="text-[#8F98A3] cursor-pointer hover:text-neutral-600 p-1"
+                className="text-[#8F98A3] cursor-pointer hover:text-[#6C7278] p-1"
               >
                 <XIcon className="w-5 h-5" />
               </button>
@@ -414,7 +414,7 @@ const NotesPage = () => {
 
             <form onSubmit={handleSaveNote} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-neutral-600 mb-1">
+                <label className="block text-xs font-semibold text-[#6C7278] mb-1">
                   Note Title
                 </label>
                 <input
@@ -428,7 +428,7 @@ const NotesPage = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-neutral-600 mb-1">
+                <label className="block text-xs font-semibold text-[#6C7278] mb-1">
                   Associated Course
                 </label>
                 <select
@@ -447,7 +447,7 @@ const NotesPage = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-neutral-600 mb-1">
+                <label className="block text-xs font-semibold text-[#6C7278] mb-1">
                   Content / Lecture Summary
                 </label>
                 <textarea
@@ -464,7 +464,7 @@ const NotesPage = () => {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2 rounded-[8px] text-xs font-medium text-neutral-600 bg-neutral-100 cursor-pointer hover:bg-neutral-200 transition"
+                  className="px-4 py-2 rounded-[8px] text-xs font-medium text-[#6C7278] bg-neutral-100 cursor-pointer hover:bg-neutral-200 transition"
                 >
                   Cancel
                 </button>
