@@ -3,7 +3,7 @@ import Image from "next/image";
 import React from "react";
 // import heroImage from "../public/images/landing_page_images/hero-image.jpg";
 import arrowRight from '../public/images/landing_page_images/arrow-right.svg'
-import playIcon from "../public/images/landing_page_images/play-icon.svg";
+import WatchDemoButton from "./WatchDemoButton";
 import avatars from '../public/images/landing_page_images/avatars-group.svg'
 import stars from '../public/images/landing_page_images/stars-group.svg'
 import dashboardImage from '../public/images/landing_page_images/dashboard-image.svg'
@@ -33,10 +33,7 @@ const Hero = () => {
               <span className="text-[16px] font-semibold ">Start Free trial</span>
               <Image src={arrowRight} alt="arrow-right" width={24} />
             </button>
-            <button className="flex gap-2 items-center justify-center text-[#3399ff] p-3 rounded-[8px] cursor-pointer shadow-[0px_17px_29.7px_0px_#D1D8DF]">
-              <Image src={playIcon} alt="play-button-icon" width={24} /> 
-              <span className="text-[16px] font-semibold ">Watch Demo</span>
-            </button>
+            <WatchDemoButton />
           </div>
 
           {/* Reviews */}
