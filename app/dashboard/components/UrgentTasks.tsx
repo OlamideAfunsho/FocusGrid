@@ -17,19 +17,12 @@ interface UrgentTask {
   id: string;
   task_title: string;
   due_date: string | null;
-  priority: 'high' | 'medium' | 'low';
   is_completed: boolean;
   course_id: string | null;
   courses: {
     course_code: string;
   } | null;
 }
-
-const PRIORITY_STYLES: Record<UrgentTask['priority'], string> = {
-  high: 'bg-red-50 text-red-600 border-red-200',
-  medium: 'bg-amber-50 text-amber-600 border-amber-200',
-  low: 'bg-neutral-100 text-neutral-600 border-neutral-200',
-};
 
 export default function UrgentTasks() {
   const { session, isLoaded } = useSession();
@@ -50,7 +43,6 @@ export default function UrgentTasks() {
           id,
           task_title,
           due_date,
-          priority,
           is_completed,
           course_id,
           courses (
@@ -203,16 +195,6 @@ export default function UrgentTasks() {
 
               <div className="flex items-center gap-2 shrink-0">
                 {getUrgencyBadge(task.due_date)}
-
-                {task.priority && (
-                  <span
-                    className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-md border ${
-                      PRIORITY_STYLES[task.priority] ?? PRIORITY_STYLES.low
-                    }`}
-                  >
-                    {task.priority}
-                  </span>
-                )}
               </div>
             </div>
           ))

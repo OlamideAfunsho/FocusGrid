@@ -4,7 +4,7 @@ import { createBrowserClient } from '@/lib/supabaseClient';
 import { useSession } from '@clerk/nextjs';
 import React, { useEffect, useState, useMemo } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import { PlusIcon, TrashIcon, Edit3Icon } from 'lucide-react';
+import { PlusIcon, TrashIcon, Edit2Icon } from 'lucide-react';
 import TaskEmptyState from '../components/TaskEmptyState';
 import TaskSkeleton from '../components/TaskSkeleton';
 
@@ -199,9 +199,9 @@ const TasksPage = () => {
     <div>
       <ToastContainer position="top-right" autoClose={2000} />
       <div>
-        <h1 className='text-center md:text-left text-2xl font-bold text-[#3E3A72]'>
-          View <span className="text-[#3399FF]">All</span> Your <span className="text-[#3399FF]">Tasks</span>
-        </h1>
+          <h1 className='text-center md:text-left text-2xl'>
+            View <span className="text-[#3399FF]">All</span> Your <span className="text-[#3399FF]">Tasks</span>
+          </h1>
         {tasks.length > 0 && (
           <button 
             onClick={() => setIsModalOpen(true)}
@@ -254,7 +254,7 @@ const TasksPage = () => {
                   className="p-1 hover:text-[#3399FF] text-neutral-500 transition cursor-pointer"
                   title="Edit Task"
                 >
-                  <Edit3Icon className='w-4 h-4' />
+                  <Edit2Icon className='w-4 h-4' />
                 </button>
                 <button
                   onClick={(e) => {
