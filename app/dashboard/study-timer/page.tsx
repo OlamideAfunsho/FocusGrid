@@ -47,10 +47,25 @@ function TimerContent() {
   // Sync incoming URL params if passed from QuickStart
   useEffect(() => {
     const courseIdParam = searchParams.get('courseId');
-    if (courseIdParam && !selectedCourseId) {
+    const durationParam = searchParams.get('duration');
+
+    if (courseIdParam && selectedCourseId !== courseIdParam) {
       setSelectedCourseId(courseIdParam);
     }
-  }, [searchParams, selectedCourseId, setSelectedCourseId]);
+
+    if (durationParam) {
+      const targetMins = parseInt(durationParam, 10);
+      const matchingMode = (Object.keys(MODE_CONFIGS) as TimerMode[]).find(
+        (m) => MODE_CONFIGS[m].defaultMinutes === targetMins
+      );
+
+      if (matchingMode && matchingMode !== mode) {
+        switchMode(matchingMode);
+      }
+    }
+
+
+  }, [searchParams, selectedCourseId, mode, setSelectedCourseId, switchMode]);
 
   // Fetch courses list
   useEffect(() => {

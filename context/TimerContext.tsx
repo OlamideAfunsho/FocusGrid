@@ -167,6 +167,13 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
   };
 
   const switchMode = (newMode: TimerMode) => {
+    if (isRunning) {
+      const confirmed = window.confirm(
+        `A ${MODE_CONFIGS[mode].label} timer is currently running. Switching modes will reset your current session. Do you want to proceed?`
+      );
+      if (!confirmed) return; // Stop if user cancels
+    }
+
     setIsRunning(false);
     setEndTime(null);
     setMode(newMode);
