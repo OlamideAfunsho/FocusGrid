@@ -17,8 +17,7 @@ export async function getWeeklyStudyFocus(userId: string): Promise<DailyStudyTim
   const { data: sessions, error } = await supabase
     .from("study_sessions")
     .select("duration_minutes, completed_at")
-    .eq("user_id", userId)
-    .eq("session_type", "focus") // Only sum actual focus sessions
+    .eq("user_id", userId) // Every timer mode (pomodoro, deep_work, marathon) counts as focus time
     .gte("completed_at", sevenDaysAgo.toISOString());
 
   if (error) {

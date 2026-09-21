@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useRef, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { createBrowserClient } from '@/lib/supabaseClient';
 import { useSession } from '@clerk/nextjs';
 
@@ -17,8 +17,8 @@ interface TimerContextType {
   timeLeft: number;
   isRunning: boolean;
   selectedCourseId: string;
-  todayPomodoroMinutes: number;
-  completedSessionsCount: number;
+  todayStudyMinutes: number;
+  todaySessionsCount: number;
   startTimer: () => void;
   pauseTimer: () => void;
   resetTimer: () => void;
@@ -26,12 +26,19 @@ interface TimerContextType {
   setSelectedCourseId: (courseId: string) => void;
 }
 
+// A finished session waiting to be saved (the Clerk session may not be ready yet)
+interface PendingSession {
+  mode: TimerMode;
+  courseId: string;
+  completedAt: number;
+}
+
 const STORAGE_KEY = 'focusgrid_timer_state';
 
 const TimerContext = createContext<TimerContextType | undefined>(undefined);
 
 export function TimerProvider({ children }: { children: React.ReactNode }) {
-  const { session, isLoaded } = useSession();
+  const { session } = useSession();
   const supabase = useMemo(() => createBrowserClient(session), [session]);
 
   const [mode, setMode] = useState<TimerMode>('pomodoro');
@@ -39,11 +46,19 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
   const [isRunning, setIsRunning] = useState(false);
   const [endTime, setEndTime] = useState<number | null>(null);
   const [selectedCourseId, setSelectedCourseId] = useState<string>('');
-  
-  const [todayPomodoroMinutes, setTodayPomodoroMinutes] = useState(0);
-  const [completedSessionsCount, setCompletedSessionsCount] = useState(0);
+
+  const [todayStudyMinutes, setTodayStudyMinutes] = useState(0);
+  const [todaySessionsCount, setTodaySessionsCount] = useState(0);
+  const [pendingSession, setPendingSession] = useState<PendingSession | null>(null);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const isSavingRef = useRef(false);
+
+  // The countdown interval only restarts on start/stop, so it reads the current mode and course from here
+  const latestRef = useRef({ mode, selectedCourseId });
+  useEffect(() => {
+    latestRef.current = { mode, selectedCourseId };
+  }, [mode, selectedCourseId]);
 
   // 1. Hydrate state from localStorage on initial mount
   useEffect(() => {
@@ -62,9 +77,15 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
           setEndTime(parsed.endTime);
           setIsRunning(true);
         } else {
-          // Timer finished while user was away
+          // Timer finished while user was away: save it once the session is available
+          const finishedMode: TimerMode = parsed.mode in MODE_CONFIGS ? parsed.mode : 'pomodoro';
           setTimeLeft(0);
           setIsRunning(false);
+          setPendingSession({
+            mode: finishedMode,
+            courseId: parsed.selectedCourseId || '',
+            completedAt: parsed.endTime,
+          });
         }
       } else {
         setTimeLeft(parsed.timeLeft ?? MODE_CONFIGS[parsed.mode as TimerMode]?.defaultMinutes * 60);
@@ -107,23 +128,68 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   };
 
-  // Log session to Supabase
-  const logCompletedSession = async () => {
-    if (!session?.user?.id) return;
-    const duration = MODE_CONFIGS[mode].defaultMinutes;
+  // Today's totals from Supabase, so they survive page reloads
+  const fetchTodayStats = useCallback(async () => {
+    if (!session?.user?.id) return null;
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
 
-    await supabase.from('study_sessions').insert({
-      user_id: session.user.id,
-      course_id: selectedCourseId || null,
-      duration_minutes: duration,
-      session_type: mode,
-    });
+    const { data, error } = await supabase
+      .from('study_sessions')
+      .select('duration_minutes')
+      .eq('user_id', session.user.id)
+      .gte('completed_at', startOfToday.toISOString());
 
-    if (mode === 'pomodoro') {
-      setTodayPomodoroMinutes((prev) => prev + duration);
-      setCompletedSessionsCount((prev) => prev + 1);
+    if (error) {
+      console.error("Failed to load today's study sessions:", error);
+      return null;
     }
-  };
+
+    return {
+      minutes: data.reduce((sum, s) => sum + (s.duration_minutes || 0), 0),
+      count: data.length,
+    };
+  }, [session, supabase]);
+
+  useEffect(() => {
+    fetchTodayStats().then((stats) => {
+      if (!stats) return;
+      setTodayStudyMinutes(stats.minutes);
+      setTodaySessionsCount(stats.count);
+    });
+  }, [fetchTodayStats]);
+
+  // Log finished sessions to Supabase
+  useEffect(() => {
+    if (!pendingSession || !session?.user?.id || isSavingRef.current) return;
+    isSavingRef.current = true;
+    const userId = session.user.id;
+
+    const saveSession = async () => {
+      const { error } = await supabase.from('study_sessions').insert({
+        user_id: userId,
+        course_id: pendingSession.courseId || null,
+        duration_minutes: MODE_CONFIGS[pendingSession.mode].defaultMinutes,
+        session_type: pendingSession.mode,
+        completed_at: new Date(pendingSession.completedAt).toISOString(),
+      });
+
+      if (error) {
+        console.error('Failed to save study session:', error);
+      } else {
+        const stats = await fetchTodayStats();
+        if (stats) {
+          setTodayStudyMinutes(stats.minutes);
+          setTodaySessionsCount(stats.count);
+        }
+      }
+
+      isSavingRef.current = false;
+      setPendingSession(null);
+    };
+
+    saveSession();
+  }, [pendingSession, session, supabase, fetchTodayStats]);
 
   // 3. Countdown loop using delta calculation
   useEffect(() => {
@@ -137,7 +203,11 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
           setIsRunning(false);
           setEndTime(null);
           playCompletionSound();
-          logCompletedSession();
+          setPendingSession({
+            mode: latestRef.current.mode,
+            courseId: latestRef.current.selectedCourseId,
+            completedAt: Date.now(),
+          });
         }
       }, 1000);
     } else if (timerRef.current) {
@@ -150,8 +220,10 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
   }, [isRunning, endTime]);
 
   const startTimer = () => {
-    const targetEndTime = Date.now() + timeLeft * 1000;
-    setEndTime(targetEndTime);
+    // A finished timer (00:00) starts a fresh session instead of completing again instantly
+    const seconds = timeLeft > 0 ? timeLeft : MODE_CONFIGS[mode].defaultMinutes * 60;
+    setTimeLeft(seconds);
+    setEndTime(Date.now() + seconds * 1000);
     setIsRunning(true);
   };
 
@@ -187,8 +259,8 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
         timeLeft,
         isRunning,
         selectedCourseId,
-        todayPomodoroMinutes,
-        completedSessionsCount,
+        todayStudyMinutes,
+        todaySessionsCount,
         startTimer,
         pauseTimer,
         resetTimer,

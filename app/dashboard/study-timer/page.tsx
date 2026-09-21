@@ -32,8 +32,8 @@ function TimerContent() {
     timeLeft,
     isRunning,
     selectedCourseId,
-    todayPomodoroMinutes,
-    completedSessionsCount,
+    todayStudyMinutes,
+    todaySessionsCount,
     startTimer,
     pauseTimer,
     resetTimer,
@@ -101,11 +101,11 @@ function TimerContent() {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-neutral-200 rounded-xl shadow-sm">
               <ClockIcon className="w-4 h-4 text-[#3399FF]" />
-              <span className="text-xs font-semibold text-[#3E3A72]">{todayPomodoroMinutes}m Today</span>
+              <span className="text-xs font-semibold text-[#3E3A72]">{todayStudyMinutes}m Today</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-neutral-200 rounded-xl shadow-sm">
               <FlameIcon className="w-4 h-4 text-orange-500" />
-              <span className="text-xs font-semibold text-[#3E3A72]">{completedSessionsCount} Sessions</span>
+              <span className="text-xs font-semibold text-[#3E3A72]">{todaySessionsCount} Sessions</span>
             </div>
           </div>
         </div>
