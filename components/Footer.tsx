@@ -1,10 +1,12 @@
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import logo from '../public/images/landing_page_images/logo.svg'
-import twitterIcon from '../public/images/landing_page_images/twitter-icon.svg'
-import facebookIcon from '../public/images/landing_page_images/facebook-icon.svg'
-import linkedinIcon from '../public/images/landing_page_images/linkedIn-icon.svg'
-import instagramIcon from '../public/images/landing_page_images/instagram-icon.svg'
+
+// The address shown publicly on the site — change this to whichever inbox should receive support mail
+const CONTACT_EMAIL = 'abolamide77@gmail.com'
+
+const linkClass = 'text-[14px] sm:text-[16px] text-[#8795A3] hover:text-[#3399FF] cursor-pointer'
 
 const Footer = () => {
   return (
@@ -22,53 +24,33 @@ const Footer = () => {
             <div className='hidden md:flex flex-col gap-6'>
                 <span className='text-[16px] sm:text-[20px] text-[#FFFFFF] font-semibold'>Product</span>
                 <ul className='flex flex-col gap-4'>
-                    <li><span className='text-[14px] sm:text-[16px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Features</span></li>
-                    <li><span className='text-[14px] sm:text-[16px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Pricing</span></li>
-                    <li><span className='text-[14px] sm:text-[16px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Roadmap</span></li>
-                    <li><span className='text-[14px] sm:text-[16px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Changelog</span></li>
-                </ul>
-            </div>
-            
-            <div className='hidden md:flex flex-col gap-6'>
-                <span className='text-[16px] sm:text-[20px] text-[#FFFFFF] font-semibold'>Company</span>
-                <ul className='flex flex-col gap-4'>
-                    <li><span className='text-[14px] sm:text-[16px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>About</span></li>
-                    <li><span className='text-[14px] sm:text-[16px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Blog</span></li>
-                    <li><span className='text-[14px] sm:text-[16px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Careers</span></li>
-                    <li><span className='text-[14px] sm:text-[16px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Contact</span></li>
+                    <li><a href='#features' className={linkClass}>Features</a></li>
+                    <li><a href='#how-it-works' className={linkClass}>How it works</a></li>
+                    <li><a href='#testimonials' className={linkClass}>Testimonials</a></li>
+                    <li><a href='#FAQs' className={linkClass}>FAQs</a></li>
                 </ul>
             </div>
 
             <div className='flex flex-col gap-4 md:gap-6'>
                 <span className='text-[16px] sm:text-[20px] text-[#FFFFFF] font-semibold'>Support</span>
                 <ul className='flex flex-col gap-4'>
-                    <li><span className='text-[14px] sm:text-[16px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Help Center</span></li>
-                    <li><span className='text-[14px] sm:text-[16px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Documentation</span></li>
-                    <li><span className='text-[14px] sm:text-[16px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>API</span></li>
-                    <li><span className='text-[14px] sm:text-[16px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Status</span></li>
+                    <li><a href={`mailto:${CONTACT_EMAIL}`} className={linkClass}>Contact</a></li>
+                    <li><Link href='/coming-soon' className={linkClass}>Help Center</Link></li>
+                    <li><Link href='/coming-soon' className={linkClass}>Documentation</Link></li>
                 </ul>
             </div>
         </section>
 
-        <div className='flex gap-4 mt-6'>
-            <Image src={twitterIcon} alt="Twitter" className='cursor-pointer' />
-            <Image src={instagramIcon} alt="Instagram" className='cursor-pointer' />
-            <Image src={linkedinIcon} alt="LinkedIn" className='cursor-pointer' />
-            <Image src={facebookIcon} alt="Facebook" className='cursor-pointer' />
-        </div>
-
         <div className='flex gap-1 flex-col sm:flex-row justify-between sm:items-center border-t-2 pt-4 border-[#D9D8D80D] mt-8 md:mt-12'>
             <p className='text-[14px] text-[#8795A3]'>&copy; 2026 FocusGrid. All rights reserved.</p>
             <div>
-                <span className='text-[14px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Privacy Policy</span>
+                <Link href='/privacy' className='text-[14px] text-[#8795A3] hover:text-[#3399FF] cursor-pointer'>Privacy Policy</Link>
                 <span className='mx-1 text-[14px] text-[#8795A3]'>|</span>
-                <span className='text-[14px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Terms of Service</span>
-                <span className='mx-1 text-[14px] text-[#8795A3]'>|</span>
-                <span className='text-[14px] text-[#8795A3] hover:text-[#3399FF] cursor-grab'>Cookies Policy</span>
+                <Link href='/coming-soon' className='text-[14px] text-[#8795A3] hover:text-[#3399FF] cursor-pointer'>Terms of Service</Link>
             </div>
         </div>
     </section>
-        
+
     </>
   )
 }

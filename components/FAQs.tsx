@@ -10,24 +10,24 @@ const FAQs = () => {
 
     const faqData = [
         {
-            question: "Is FocusGrid really free?", 
-            answer: "Yes! Our free plan includes core features like task management for up to 3 courses, study timer, and basic notes. You can upgrade to Pro anytime for advanced features."
+            question: "Is FocusGrid really free?",
+            answer: "Yes. FocusGrid is free to use, with no paid plans, no subscriptions and no card details required. Add as many courses, tasks and notes as you need."
         },
         {
             question: "How does the study timer work?", 
             answer: "Our study timer uses the Pomodoro technique, allowing you to set focused study intervals (e.g., 25 minutes) followed by short breaks. You can customize the durations to fit your workflow."
         },
         {
-            question: "Can I collaborate with classmates?", 
-            answer: "Yes, FocusGrid allows you to create shared study groups and collaborate on tasks and notes with your peers."
+            question: "Can I use FocusGrid on my phone?",
+            answer: "Yes. FocusGrid runs in your browser on a phone, tablet or laptop, so there is nothing to install. Sign in on any device and your courses, tasks and notes are all there."
         },
         {
-            question: "Can I use FocusGrid on my phone?", 
-            answer: "Absolutely! FocusGrid works perfectly on desktop, tablet and mobile. Our responsive design ensures a seamless experience across all devices. Native mobile apps coming soon!"
+            question: "Where is my data stored, and who can see it?",
+            answer: "Your courses, tasks, notes and study sessions are stored in a hosted database and are only visible to you when you are signed in. Sign-in is handled by Clerk, so the app never stores your password. See the privacy page for the full details."
         },
         {
-            question: "What  happens to my data if I cancel?",
-            answer: "If you cancel your subscription, you will still have access to your data and can continue using the free features. However, you will lose access to any Pro features and your account will be downgraded to the free plan."
+            question: "What happens to what I create?",
+            answer: "It stays in your account until you remove it. You can edit or delete any task, note or course at any time, and you can email us to have your whole account and its data deleted."
         }
 
     ]

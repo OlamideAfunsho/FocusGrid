@@ -11,7 +11,7 @@ const SubFooter = () => {
     <section className='flex flex-col md:flex-row bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)]'>
         <div className='px-4 py-8 sm:p-12 lg:px-[120px] self-center text-center md:text-left'>
             <h1 className='text-2xl sm:text-4xl leading-10 sm:leading-[60px] font-bold text-white mb-4'>Ready to Transform Your Academic Life?</h1>
-            <p className='text-[18px] sm:text-[20px] text-white mb-6'>Join 50, 000+ students who are staying organized and achieving their goals with FocusGrid</p>
+            <p className='text-[18px] sm:text-[20px] text-white mb-6'>Keep your courses, assignments, notes and study time in one place, and see where your week actually goes.</p>
 
             <div className='flex gap-4 w-full justify-center md:justify-start'>
                 <AuthCtaButton
