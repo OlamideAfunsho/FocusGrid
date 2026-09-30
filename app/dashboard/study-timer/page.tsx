@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import React, { useState, useEffect, useMemo, useRef, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   PlayIcon,
   PauseIcon,
@@ -34,6 +34,7 @@ const PRESET_MODES: TimerMode[] = ['pomodoro', 'deep_work', 'marathon'];
 const STEP_MINUTES = 5;
 
 function TimerContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { session, isLoaded } = useSession();
   const supabase = useMemo(() => createBrowserClient(session), [session]);
@@ -57,9 +58,20 @@ function TimerContent() {
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [courses, setCourses] = useState<CourseOption[]>([]);
+  const appliedParamsRef = useRef<string | null>(null);
 
-  // Sync incoming URL params if passed from QuickStart
+  // Apply the params QuickStart arrives with once, then clear them from the URL.
+  // Without this the mode would be forced back every render, making the other modes look disabled.
   useEffect(() => {
+    const paramsKey = searchParams.toString();
+
+    if (!paramsKey) {
+      appliedParamsRef.current = null;
+      return;
+    }
+    if (appliedParamsRef.current === paramsKey) return;
+    appliedParamsRef.current = paramsKey;
+
     const courseIdParam = searchParams.get('courseId');
     const durationParam = searchParams.get('duration');
 
@@ -82,8 +94,8 @@ function TimerContent() {
       }
     }
 
-
-  }, [searchParams, selectedCourseId, mode, setSelectedCourseId, switchMode, setCustomMinutes]);
+    router.replace('/dashboard/study-timer', { scroll: false });
+  }, [searchParams, router, selectedCourseId, mode, setSelectedCourseId, switchMode, setCustomMinutes]);
 
   // Fetch courses list
   useEffect(() => {

@@ -101,10 +101,20 @@ const FocusDistribution = () => {
     fetchDistributionData();
   }, [isLoaded, session, supabase]);
 
-  // Calculate SVG Donut stroke offsets
+  // Calculate SVG Donut stroke offsets. The drawing is 176x176 user units, shown through a
+  // viewBox so it scales down in narrow columns instead of being clipped.
+  const DONUT_SIZE = 176;
   const radius = 70;
   const circumference = 2 * Math.PI * radius;
-  let accumulatedPercent = 0;
+
+  // Slices are drawn from exact minutes, so rounded percentages can never leave a gap in the ring
+  const fractions = distribution.map((item) =>
+    totalMinutes > 0 ? item.minutes / totalMinutes : 0
+  );
+  // Where each slice starts: the sum of every slice before it
+  const startFractions = fractions.map((_, index) =>
+    fractions.slice(0, index).reduce((sum, fraction) => sum + fraction, 0)
+  );
 
   const formatHours = (mins: number) => {
     const hrs = (mins / 60).toFixed(1);
@@ -146,7 +156,10 @@ const FocusDistribution = () => {
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center py-4 flex-1">
           {/* Donut Visual */}
           <div className="sm:col-span-5 flex items-center justify-center relative">
-            <svg className="w-44 h-44 transform -rotate-90">
+            <svg
+              viewBox={`0 0 ${DONUT_SIZE} ${DONUT_SIZE}`}
+              className="w-40 sm:w-44 max-w-full h-auto transform -rotate-90"
+            >
               {/* Background Ring */}
               <circle
                 cx="88"
@@ -157,10 +170,9 @@ const FocusDistribution = () => {
                 fill="transparent"
               />
               {/* Segmented Rings */}
-              {distribution.map((item) => {
-                const strokeDasharray = `${(item.percentage / 100) * circumference} ${circumference}`;
-                const strokeDashoffset = -((accumulatedPercent / 100) * circumference);
-                accumulatedPercent += item.percentage;
+              {distribution.map((item, index) => {
+                const strokeDasharray = `${fractions[index] * circumference} ${circumference}`;
+                const strokeDashoffset = -(startFractions[index] * circumference);
 
                 return (
                   <circle

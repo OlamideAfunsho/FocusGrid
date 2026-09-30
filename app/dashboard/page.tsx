@@ -3,7 +3,7 @@ import { ListTodoIcon, TimerIcon, CheckCircle2Icon, BookCopyIcon } from 'lucide-
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
-import { getWeeklyStudyFocus } from '@/lib/supabase/queries';
+import { getWeeklyStudySessions } from '@/lib/supabase/queries';
 import WeeklyStudyCharts from './components/WeeklyStudyCharts';
 import QuickStartTimer from './components/QuickStartTimer';
 import FocusDistribution from './components/FocusDistribution';
@@ -21,8 +21,8 @@ export default async function DashboardPage() {
   const supabase = await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
   //2. Fetch all dashboard data concurrently on the server
-  const [weeklyData, tasksRes, sessionsRes, coursesRes, activeCoursesList] = await Promise.all([
-    getWeeklyStudyFocus(userId),
+  const [weeklySessions, tasksRes, sessionsRes, coursesRes, activeCoursesList] = await Promise.all([
+    getWeeklyStudySessions(userId),
     supabase
       .from('tasks')
       .select('id', { count: 'exact', head: true })
@@ -107,7 +107,7 @@ export default async function DashboardPage() {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:col-span-3 mt-6">
           <div className='lg:col-span-2'>
-            <WeeklyStudyCharts data={weeklyData} />
+            <WeeklyStudyCharts sessions={weeklySessions} />
           </div>
           <FocusDistribution />
         </div>
