@@ -2,25 +2,36 @@
 
 import React, { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { 
-  PlayIcon, 
-  PauseIcon, 
-  RotateCcwIcon, 
-  BookOpenIcon, 
-  Maximize2Icon, 
-  Minimize2Icon, 
+import {
+  PlayIcon,
+  PauseIcon,
+  RotateCcwIcon,
+  BookOpenIcon,
+  Maximize2Icon,
+  Minimize2Icon,
   FlameIcon,
-  ClockIcon
+  ClockIcon,
+  MinusIcon,
+  PlusIcon
 } from 'lucide-react';
 import { createBrowserClient } from '@/lib/supabaseClient';
 import { useSession } from '@clerk/nextjs';
-import { useTimer, MODE_CONFIGS, TimerMode } from '@/context/TimerContext';
+import {
+  useTimer,
+  MODE_CONFIGS,
+  TimerMode,
+  MIN_SESSION_MINUTES,
+  MAX_SESSION_MINUTES,
+} from '@/context/TimerContext';
 
 interface CourseOption {
   id: string;
   name: string;
   course_code: string;
 }
+
+const PRESET_MODES: TimerMode[] = ['pomodoro', 'deep_work', 'marathon'];
+const STEP_MINUTES = 5;
 
 function TimerContent() {
   const searchParams = useSearchParams();
@@ -32,6 +43,8 @@ function TimerContent() {
     timeLeft,
     isRunning,
     selectedCourseId,
+    customMinutes,
+    sessionMinutes,
     todayStudyMinutes,
     todaySessionsCount,
     startTimer,
@@ -39,6 +52,7 @@ function TimerContent() {
     resetTimer,
     switchMode,
     setSelectedCourseId,
+    setCustomMinutes,
   } = useTimer();
 
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -55,17 +69,21 @@ function TimerContent() {
 
     if (durationParam) {
       const targetMins = parseInt(durationParam, 10);
-      const matchingMode = (Object.keys(MODE_CONFIGS) as TimerMode[]).find(
+      const matchingPreset = PRESET_MODES.find(
         (m) => MODE_CONFIGS[m].defaultMinutes === targetMins
       );
 
-      if (matchingMode && matchingMode !== mode) {
-        switchMode(matchingMode);
+      if (matchingPreset) {
+        if (matchingPreset !== mode) switchMode(matchingPreset);
+      } else if (!Number.isNaN(targetMins)) {
+        // Any other length arrives as a custom session
+        if (mode !== 'custom') switchMode('custom');
+        setCustomMinutes(targetMins);
       }
     }
 
 
-  }, [searchParams, selectedCourseId, mode, setSelectedCourseId, switchMode]);
+  }, [searchParams, selectedCourseId, mode, setSelectedCourseId, switchMode, setCustomMinutes]);
 
   // Fetch courses list
   useEffect(() => {
@@ -83,12 +101,12 @@ function TimerContent() {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const totalSeconds = MODE_CONFIGS[mode].defaultMinutes * 60;
+  const totalSeconds = sessionMinutes * 60;
   const progressPercent = ((totalSeconds - timeLeft) / totalSeconds) * 100;
 
   return (
-    <div className={`transition-all duration-300 ${isFullscreen ? 'fixed inset-0 z-50 bg-neutral-900 text-white flex flex-col items-center justify-center p-6' : 'space-y-6'}`}>
-      
+    <div className={`transition-all duration-300 ${isFullscreen ? 'fixed inset-0 z-50 bg-neutral-900 text-white flex flex-col items-center justify-center overflow-y-auto p-4 sm:p-6' : 'space-y-6'}`}>
+
       {!isFullscreen && (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
@@ -111,8 +129,8 @@ function TimerContent() {
         </div>
       )}
 
-      <div className={`mx-auto w-full max-w-xl bg-white border border-neutral-200 rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col items-center relative ${isFullscreen ? 'bg-neutral-800 border-neutral-700 text-white' : ''}`}>
-        
+      <div className={`mx-auto w-full max-w-xl bg-white border border-neutral-200 rounded-2xl p-5 pt-14 sm:p-8 shadow-sm flex flex-col items-center relative ${isFullscreen ? 'bg-neutral-800 border-neutral-700 text-white' : ''}`}>
+
         <button
           onClick={() => setIsFullscreen(!isFullscreen)}
           className="absolute top-4 right-4 p-2 text-[#8F98A3] hover:text-[#6C7278] cursor-pointer rounded-lg transition"
@@ -121,23 +139,77 @@ function TimerContent() {
           {isFullscreen ? <Minimize2Icon className="w-5 h-5" /> : <Maximize2Icon className="w-5 h-5" />}
         </button>
 
-        <div className="flex items-center p-1 bg-neutral-100 rounded-xl mb-6 gap-1">
-          {(['pomodoro', 'deep_work', 'marathon'] as TimerMode[]).map((m) => (
+        <div className="flex flex-wrap items-center justify-center p-1 bg-neutral-100 rounded-xl mb-5 gap-1">
+          {([...PRESET_MODES, 'custom'] as TimerMode[]).map((m) => (
             <button
               key={m}
               onClick={() => switchMode(m)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
-                mode === m 
-                  ? 'bg-white text-[#3E3A72] shadow-sm' 
+              className={`px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                mode === m
+                  ? 'bg-white text-[#3E3A72] shadow-sm'
                   : 'text-[#6C7278] hover:text-[#3E3A72]'
               }`}
             >
               {MODE_CONFIGS[m].label}
+              {m !== 'custom' && (
+                <span className="hidden sm:inline font-medium text-[#8F98A3]"> · {MODE_CONFIGS[m].defaultMinutes}m</span>
+              )}
             </button>
           ))}
         </div>
 
-        <div className="mb-6 w-full max-w-xs">
+        {/* Session length, only for the custom mode; presets keep their fixed lengths */}
+        {mode === 'custom' && (
+          <div className="w-full max-w-xs mb-5">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-semibold text-[#6C7278]">Your session length</span>
+              <span className="text-[11px] text-[#8F98A3]">
+                {isRunning ? 'Pause to adjust' : `${MIN_SESSION_MINUTES}–${MAX_SESSION_MINUTES} min`}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between gap-2 bg-neutral-50 border border-neutral-200 rounded-lg p-1.5">
+              <button
+                type="button"
+                onClick={() => setCustomMinutes(customMinutes - STEP_MINUTES)}
+                disabled={isRunning || customMinutes <= MIN_SESSION_MINUTES}
+                className="p-2 rounded-lg text-[#6C7278] hover:bg-neutral-200 disabled:opacity-40 disabled:hover:bg-transparent disabled:cursor-not-allowed cursor-pointer transition"
+                title={`${STEP_MINUTES} minutes shorter`}
+              >
+                <MinusIcon className="w-4 h-4" />
+              </button>
+
+              <label className="flex items-baseline gap-1">
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min={MIN_SESSION_MINUTES}
+                  max={MAX_SESSION_MINUTES}
+                  value={customMinutes}
+                  disabled={isRunning}
+                  onChange={(e) => {
+                    const next = parseInt(e.target.value, 10);
+                    if (!Number.isNaN(next)) setCustomMinutes(next);
+                  }}
+                  className="w-12 bg-transparent text-center text-lg font-semibold text-[#3E3A72] focus:outline-none disabled:cursor-not-allowed [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                />
+                <span className="text-xs font-medium text-[#8F98A3]">min</span>
+              </label>
+
+              <button
+                type="button"
+                onClick={() => setCustomMinutes(customMinutes + STEP_MINUTES)}
+                disabled={isRunning || customMinutes >= MAX_SESSION_MINUTES}
+                className="p-2 rounded-lg text-[#6C7278] hover:bg-neutral-200 disabled:opacity-40 disabled:hover:bg-transparent disabled:cursor-not-allowed cursor-pointer transition"
+                title={`${STEP_MINUTES} minutes longer`}
+              >
+                <PlusIcon className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="mb-5 w-full max-w-xs">
           <div className="relative">
             <BookOpenIcon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8F98A3]" />
             <select
@@ -155,8 +227,8 @@ function TimerContent() {
           </div>
         </div>
 
-        <div className="relative flex items-center justify-center my-4">
-          <svg className="w-64 h-64 transform -rotate-90">
+        <div className="relative flex items-center justify-center my-2 sm:my-4">
+          <svg viewBox="0 0 256 256" className="w-52 h-52 sm:w-64 sm:h-64 transform -rotate-90">
             <circle
               cx="128"
               cy="128"
@@ -180,19 +252,19 @@ function TimerContent() {
             />
           </svg>
           <div className="absolute flex flex-col items-center">
-            <span className="text-5xl font-mono font-bold tracking-tight">
+            <span className="text-4xl sm:text-5xl font-mono font-bold tracking-tight">
               {formatTime(timeLeft)}
             </span>
-            <span className="text-xs uppercase tracking-wider font-semibold text-[#8F98A3] mt-2">
-              {MODE_CONFIGS[mode].label}
+            <span className="text-xs uppercase tracking-wider font-semibold text-[#8F98A3] mt-2 text-center">
+              {MODE_CONFIGS[mode].label} · {sessionMinutes}m
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 mt-6">
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mt-6">
           <button
             onClick={isRunning ? pauseTimer : startTimer}
-            className="flex items-center gap-2 shadow-[0px_7px_9.1px_0px_#C9C9FF9F] bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] text-white px-8 py-2.5 rounded-[8px] font-medium hover:opacity-90 transition cursor-pointer"
+            className="flex items-center gap-2 shadow-[0px_7px_9.1px_0px_#C9C9FF9F] bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] text-white px-6 sm:px-8 py-2.5 rounded-[8px] font-medium hover:opacity-90 transition cursor-pointer"
           >
             {isRunning ? (
               <>
@@ -207,10 +279,10 @@ function TimerContent() {
 
           <button
             onClick={resetTimer}
-            className="p-3 bg-neutral-100 text-[#6C7278] hover:bg-neutral-200 rounded-xl transition"
+            className="p-3 bg-neutral-100 text-[#6C7278] hover:bg-neutral-200 rounded-xl transition cursor-pointer"
             title="Reset Timer"
           >
-            <RotateCcwIcon className="w-5 h-5 cursor-pointer" />
+            <RotateCcwIcon className="w-5 h-5" />
           </button>
         </div>
       </div>

@@ -4,19 +4,36 @@ import React, { createContext, useContext, useState, useEffect, useRef, useMemo,
 import { createBrowserClient } from '@/lib/supabaseClient';
 import { useSession } from '@clerk/nextjs';
 
-export type TimerMode = 'pomodoro' | 'deep_work' | 'marathon';
+export type TimerMode = 'pomodoro' | 'deep_work' | 'marathon' | 'custom';
 
 export const MODE_CONFIGS: Record<TimerMode, { label: string; defaultMinutes: number }> = {
   pomodoro: { label: 'Pomodoro', defaultMinutes: 25 },
   deep_work: { label: 'Deep Work', defaultMinutes: 45 },
   marathon: { label: 'Marathon', defaultMinutes: 60 },
+  custom: { label: 'Custom', defaultMinutes: 30 },
 };
+
+export const MIN_SESSION_MINUTES = 1;
+export const MAX_SESSION_MINUTES = 180;
+
+// Whole minutes inside the allowed range, or null when the value is unusable
+const clampMinutes = (value: unknown): number | null => {
+  const minutes = Math.round(Number(value));
+  if (!Number.isFinite(minutes)) return null;
+  return Math.min(MAX_SESSION_MINUTES, Math.max(MIN_SESSION_MINUTES, minutes));
+};
+
+// Presets keep their fixed lengths; only the custom mode uses the user's own value
+const minutesForMode = (timerMode: TimerMode, customMinutes: number) =>
+  timerMode === 'custom' ? customMinutes : MODE_CONFIGS[timerMode].defaultMinutes;
 
 interface TimerContextType {
   mode: TimerMode;
   timeLeft: number;
   isRunning: boolean;
   selectedCourseId: string;
+  customMinutes: number;
+  sessionMinutes: number;
   todayStudyMinutes: number;
   todaySessionsCount: number;
   startTimer: () => void;
@@ -24,12 +41,14 @@ interface TimerContextType {
   resetTimer: () => void;
   switchMode: (newMode: TimerMode) => void;
   setSelectedCourseId: (courseId: string) => void;
+  setCustomMinutes: (minutes: number) => void;
 }
 
 // A finished session waiting to be saved (the Clerk session may not be ready yet)
 interface PendingSession {
   mode: TimerMode;
   courseId: string;
+  minutes: number;
   completedAt: number;
 }
 
@@ -42,7 +61,8 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
   const supabase = useMemo(() => createBrowserClient(session), [session]);
 
   const [mode, setMode] = useState<TimerMode>('pomodoro');
-  const [timeLeft, setTimeLeft] = useState(25 * 60);
+  const [customMinutes, setCustomMinutesState] = useState(MODE_CONFIGS.custom.defaultMinutes);
+  const [timeLeft, setTimeLeft] = useState(MODE_CONFIGS.pomodoro.defaultMinutes * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [endTime, setEndTime] = useState<number | null>(null);
   const [selectedCourseId, setSelectedCourseId] = useState<string>('');
@@ -54,11 +74,11 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const isSavingRef = useRef(false);
 
-  // The countdown interval only restarts on start/stop, so it reads the current mode and course from here
-  const latestRef = useRef({ mode, selectedCourseId });
+  // The countdown interval only restarts on start/stop, so it reads current values from here
+  const latestRef = useRef({ mode, selectedCourseId, customMinutes });
   useEffect(() => {
-    latestRef.current = { mode, selectedCourseId };
-  }, [mode, selectedCourseId]);
+    latestRef.current = { mode, selectedCourseId, customMinutes };
+  }, [mode, selectedCourseId, customMinutes]);
 
   // 1. Hydrate state from localStorage on initial mount
   useEffect(() => {
@@ -67,8 +87,12 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const parsed = JSON.parse(saved);
-      setMode(parsed.mode || 'pomodoro');
+      const savedMode: TimerMode = parsed.mode in MODE_CONFIGS ? parsed.mode : 'pomodoro';
+      const savedCustom = clampMinutes(parsed.customMinutes) ?? MODE_CONFIGS.custom.defaultMinutes;
+
+      setMode(savedMode);
       setSelectedCourseId(parsed.selectedCourseId || '');
+      setCustomMinutesState(savedCustom);
 
       if (parsed.isRunning && parsed.endTime) {
         const remaining = Math.max(0, Math.ceil((parsed.endTime - Date.now()) / 1000));
@@ -78,17 +102,17 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
           setIsRunning(true);
         } else {
           // Timer finished while user was away: save it once the session is available
-          const finishedMode: TimerMode = parsed.mode in MODE_CONFIGS ? parsed.mode : 'pomodoro';
           setTimeLeft(0);
           setIsRunning(false);
           setPendingSession({
-            mode: finishedMode,
+            mode: savedMode,
             courseId: parsed.selectedCourseId || '',
+            minutes: clampMinutes(parsed.sessionMinutes) ?? minutesForMode(savedMode, savedCustom),
             completedAt: parsed.endTime,
           });
         }
       } else {
-        setTimeLeft(parsed.timeLeft ?? MODE_CONFIGS[parsed.mode as TimerMode]?.defaultMinutes * 60);
+        setTimeLeft(parsed.timeLeft ?? minutesForMode(savedMode, savedCustom) * 60);
         setIsRunning(false);
       }
     } catch (e) {
@@ -106,9 +130,12 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
         isRunning,
         endTime,
         selectedCourseId,
+        customMinutes,
+        // The length of the session currently running, so a finish while away is logged correctly
+        sessionMinutes: minutesForMode(mode, customMinutes),
       })
     );
-  }, [mode, timeLeft, isRunning, endTime, selectedCourseId]);
+  }, [mode, timeLeft, isRunning, endTime, selectedCourseId, customMinutes]);
 
   // Audio trigger
   const playCompletionSound = () => {
@@ -169,7 +196,7 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.from('study_sessions').insert({
         user_id: userId,
         course_id: pendingSession.courseId || null,
-        duration_minutes: MODE_CONFIGS[pendingSession.mode].defaultMinutes,
+        duration_minutes: pendingSession.minutes,
         session_type: pendingSession.mode,
         completed_at: new Date(pendingSession.completedAt).toISOString(),
       });
@@ -206,6 +233,7 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
           setPendingSession({
             mode: latestRef.current.mode,
             courseId: latestRef.current.selectedCourseId,
+            minutes: minutesForMode(latestRef.current.mode, latestRef.current.customMinutes),
             completedAt: Date.now(),
           });
         }
@@ -221,7 +249,7 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
 
   const startTimer = () => {
     // A finished timer (00:00) starts a fresh session instead of completing again instantly
-    const seconds = timeLeft > 0 ? timeLeft : MODE_CONFIGS[mode].defaultMinutes * 60;
+    const seconds = timeLeft > 0 ? timeLeft : minutesForMode(mode, customMinutes) * 60;
     setTimeLeft(seconds);
     setEndTime(Date.now() + seconds * 1000);
     setIsRunning(true);
@@ -235,7 +263,7 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
   const resetTimer = () => {
     setIsRunning(false);
     setEndTime(null);
-    setTimeLeft(MODE_CONFIGS[mode].defaultMinutes * 60);
+    setTimeLeft(minutesForMode(mode, customMinutes) * 60);
   };
 
   const switchMode = (newMode: TimerMode) => {
@@ -249,7 +277,19 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
     setIsRunning(false);
     setEndTime(null);
     setMode(newMode);
-    setTimeLeft(MODE_CONFIGS[newMode].defaultMinutes * 60);
+    setTimeLeft(minutesForMode(newMode, customMinutes) * 60);
+  };
+
+  // Only the custom mode's length is editable; a running timer is left alone
+  const setCustomMinutes = (minutes: number) => {
+    const clamped = clampMinutes(minutes);
+    if (!clamped || clamped === customMinutes) return;
+
+    setCustomMinutesState(clamped);
+
+    if (!isRunning && mode === 'custom') {
+      setTimeLeft(clamped * 60);
+    }
   };
 
   return (
@@ -259,6 +299,8 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
         timeLeft,
         isRunning,
         selectedCourseId,
+        customMinutes,
+        sessionMinutes: minutesForMode(mode, customMinutes),
         todayStudyMinutes,
         todaySessionsCount,
         startTimer,
@@ -266,6 +308,7 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
         resetTimer,
         switchMode,
         setSelectedCourseId,
+        setCustomMinutes,
       }}
     >
       {children}
