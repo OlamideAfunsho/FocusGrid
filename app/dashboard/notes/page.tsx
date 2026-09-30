@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { 
-  PlusIcon, 
-  SearchIcon, 
-  Trash2Icon, 
-  PencilIcon, 
-  BookOpenIcon, 
-  CalendarIcon, 
-  XIcon 
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  PlusIcon,
+  SearchIcon,
+  Trash2Icon,
+  PencilIcon,
+  BookOpenIcon,
+  CalendarIcon,
+  XIcon
 } from 'lucide-react';
+import { toast, ToastContainer } from 'react-toastify';
 import { createBrowserClient } from '@/lib/supabaseClient';
 import { useSession } from '@clerk/nextjs';
 
@@ -23,14 +24,21 @@ interface NoteItem {
   id: string;
   title: string;
   content: string;
-  course_id: string;
+  course_id: string | null;
   created_at: string;
+  updated_at?: string | null;
   courses: CourseOption | null;
 }
 
+// "Updated" once a note has been edited, otherwise "Created"
+const noteStamp = (note: NoteItem) => {
+  const edited = note.updated_at && note.updated_at !== note.created_at;
+  return { label: edited ? 'Updated' : 'Created', date: edited ? note.updated_at! : note.created_at };
+};
+
 const NotesPage = () => {
   const { session, isLoaded } = useSession();
-  const supabase = createBrowserClient(session);
+  const supabase = useMemo(() => createBrowserClient(session), [session]);
 
   // Data State
   const [notes, setNotes] = useState<NoteItem[]>([]);
@@ -39,12 +47,13 @@ const NotesPage = () => {
 
   // Viewing State
   const [viewingNote, setViewingNote] = useState<NoteItem | null>(null);
-  
+
   // Interactive UI State
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCourseFilter, setSelectedCourseFilter] = useState('ALL');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeNote, setActiveNote] = useState<NoteItem | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Form State
   const [noteTitle, setNoteTitle] = useState('');
@@ -60,17 +69,12 @@ const NotesPage = () => {
       try {
         const [notesRes, coursesRes] = await Promise.all([
           supabase
+            // Selecting every column keeps this working whether or not `updated_at` exists yet
             .from('notes')
-            .select(`
-              id,
-              title,
-              content,
-              course_id,
-              created_at,
-              courses (id, name, course_code)
-            `)
-            .eq('user_id', session.user.id),
-          supabase.from('courses').select('id, name, course_code')
+            .select('*, courses (id, name, course_code)')
+            .eq('user_id', session.user.id)
+            .order('created_at', { ascending: false }),
+          supabase.from('courses').select('id, name, course_code').order('course_code')
         ]);
 
         if (notesRes.error) throw notesRes.error;
@@ -80,13 +84,14 @@ const NotesPage = () => {
         setCourses(coursesRes.data || []);
       } catch (error) {
         console.error('Error fetching notes data:', error);
+        toast.error('Could not load your notes, try refreshing');
       } finally {
         setLoading(false);
       }
     };
 
     fetchPageData();
-  }, [session, isLoaded]);
+  }, [session, isLoaded, supabase]);
 
   // Modal handlers
   const openCreateModal = () => {
@@ -100,7 +105,7 @@ const NotesPage = () => {
   const openEditModal = (note: NoteItem) => {
     setActiveNote(note);
     setNoteTitle(note.title);
-    setSelectedCourseId(note.course_id);
+    setSelectedCourseId(note.course_id ?? '');
     setNoteContent(note.content);
     setIsModalOpen(true);
   };
@@ -113,50 +118,58 @@ const NotesPage = () => {
   // 2. Create or Update Handler
   const handleSaveNote = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!session?.user?.id || !selectedCourseId) return;
+    if (!session?.user?.id || isSaving) return;
+
+    setIsSaving(true);
+
+    // A course is optional, so a note can be written before any courses exist
+    const payload = {
+      title: noteTitle,
+      content: noteContent,
+      course_id: selectedCourseId || null,
+    };
 
     if (activeNote) {
       // Update existing note
       const { data, error } = await supabase
         .from('notes')
-        .update({
-          title: noteTitle,
-          content: noteContent,
-          course_id: selectedCourseId,
-        })
+        .update(payload)
         .eq('id', activeNote.id)
-        .select(`
-          id, title, content, course_id, created_at,
-          courses (id, name, course_code)
-        `)
+        .select('*, courses (id, name, course_code)')
         .single();
 
-      if (!error && data) {
-        setNotes(prev =>
-          prev.map(item => (item.id === activeNote.id ? (data as unknown as NoteItem) : item))
-        );
-        closeModal();
+      setIsSaving(false);
+
+      if (error || !data) {
+        console.error('Error updating note:', error);
+        toast.error('Could not save your changes, try again');
+        return;
       }
+
+      const updated = data as unknown as NoteItem;
+      setNotes(prev => prev.map(item => (item.id === activeNote.id ? updated : item)));
+      setViewingNote(prev => (prev?.id === updated.id ? updated : prev));
+      toast.success('Note updated');
+      closeModal();
     } else {
       // Create new note
       const { data, error } = await supabase
         .from('notes')
-        .insert({
-          title: noteTitle,
-          content: noteContent,
-          course_id: selectedCourseId,
-          user_id: session.user.id,
-        })
-        .select(`
-          id, title, content, course_id, created_at,
-          courses (id, name, course_code)
-        `)
+        .insert({ ...payload, user_id: session.user.id })
+        .select('*, courses (id, name, course_code)')
         .single();
 
-      if (!error && data) {
-        setNotes(prev => [data as unknown as NoteItem, ...prev]);
-        closeModal();
+      setIsSaving(false);
+
+      if (error || !data) {
+        console.error('Error creating note:', error);
+        toast.error('Could not create the note, try again');
+        return;
       }
+
+      setNotes(prev => [data as unknown as NoteItem, ...prev]);
+      toast.success('Note created');
+      closeModal();
     }
   };
 
@@ -166,25 +179,35 @@ const NotesPage = () => {
 
     const { error } = await supabase.from('notes').delete().eq('id', id);
 
-    if (!error) {
-      setNotes(prev => prev.filter(note => note.id !== id));
+    if (error) {
+      console.error('Error deleting note:', error);
+      toast.error('Could not delete the note, try again');
+      return;
     }
+
+    setNotes(prev => prev.filter(note => note.id !== id));
+    setViewingNote(prev => (prev?.id === id ? null : prev));
+    toast.success('Note deleted');
   };
 
   // Filter logic
   const filteredNotes = notes.filter((note) => {
-    const matchesSearch = 
+    const matchesSearch =
       note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       note.content.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesCourse = 
+
+    const matchesCourse =
       selectedCourseFilter === 'ALL' || note.course_id === selectedCourseFilter;
 
     return matchesSearch && matchesCourse;
   });
 
+  const hasNoNotesAtAll = notes.length === 0;
+
   return (
     <div className="">
+      <ToastContainer position="top-right" autoClose={2000} />
+
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -240,13 +263,37 @@ const NotesPage = () => {
       {/* Content */}
       {loading ? (
         <div className="p-8 text-center text-neutral-500">Loading notes...</div>
-      ) : filteredNotes.length === 0 ? (
+      ) : hasNoNotesAtAll ? (
         <div className="flex flex-col items-center justify-center py-16 bg-neutral-50 border border-dashed border-neutral-200 rounded-2xl text-center">
           <BookOpenIcon className="w-12 h-12 text-neutral-300 mb-3" />
-          <h3 className="text-lg font-semibold text-[#3E3A72]">No notes found</h3>
+          <h3 className="text-lg font-semibold text-[#3E3A72]">No notes yet</h3>
           <p className="text-sm text-[#8F98A3] max-w-sm mt-1">
-            Try adjusting your search criteria or create a new note for your classes.
+            Write your first note after your next lecture. You can link it to a course, or keep it general.
           </p>
+          <button
+            onClick={openCreateModal}
+            className="flex items-center gap-2 mt-4 bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] text-white px-4 py-2.5 rounded-[8px] text-sm font-medium cursor-pointer hover:opacity-90 transition shadow-md"
+          >
+            <PlusIcon className="w-4 h-4" />
+            Create your first note
+          </button>
+        </div>
+      ) : filteredNotes.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 bg-neutral-50 border border-dashed border-neutral-200 rounded-2xl text-center">
+          <SearchIcon className="w-12 h-12 text-neutral-300 mb-3" />
+          <h3 className="text-lg font-semibold text-[#3E3A72]">No matching notes</h3>
+          <p className="text-sm text-[#8F98A3] max-w-sm mt-1">
+            Nothing matches that search or course filter. Try a different keyword, or clear the filter.
+          </p>
+          <button
+            onClick={() => {
+              setSearchQuery('');
+              setSelectedCourseFilter('ALL');
+            }}
+            className="mt-4 px-4 py-2 rounded-[8px] text-xs font-medium text-[#6C7278] bg-neutral-100 cursor-pointer hover:bg-neutral-200 transition"
+          >
+            Clear filters
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -260,12 +307,12 @@ const NotesPage = () => {
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-[#EEF2FF] text-[#3399FF]">
                     <BookOpenIcon className="w-3 h-3" />
-                    {note.courses?.course_code ?? 'No Course'}
+                    {note.courses?.course_code ?? 'General'}
                   </span>
                   <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition">
                     <button
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent opening the view modal    
+                        e.stopPropagation(); // Prevent opening the view modal
                         openEditModal(note);
                       }}
                       className="p-1.5 text-[#8F98A3] cursor-pointer hover:text-[#3399FF] rounded-lg transition"
@@ -295,10 +342,10 @@ const NotesPage = () => {
               </div>
 
               <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#8F98A3]">
-                <span className="truncate max-w-[180px]">{note.courses?.name ?? 'No Course'}</span>
+                <span className="truncate max-w-[180px]">{note.courses?.name ?? 'No course'}</span>
                 <span className="flex items-center gap-1">
                   <CalendarIcon className="w-3 h-3" />
-                  {new Date(note.created_at).toLocaleDateString(undefined, {
+                  {new Date(noteStamp(note).date).toLocaleDateString(undefined, {
                     month: 'short',
                     day: 'numeric',
                   })}
@@ -320,14 +367,14 @@ const NotesPage = () => {
 
           <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
             <div className="w-screen max-w-full sm:w-[480px] bg-white shadow-2xl border-l border-neutral-100 flex flex-col">
-              
+
               {/* Panel Header */}
               <div className="p-6 border-b border-neutral-100 flex items-start justify-between gap-4 bg-neutral-50/50">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-[#EEF2FF] text-[#3399FF]">
                       <BookOpenIcon className="w-3.5 h-3.5" />
-                      {viewingNote.courses?.course_code ?? 'No Course'}
+                      {viewingNote.courses?.course_code ?? 'General'}
                     </span>
                     <span className="text-xs text-[#8F98A3] truncate max-w-[180px]">
                       {viewingNote.courses?.name}
@@ -358,7 +405,8 @@ const NotesPage = () => {
                 <div className="flex items-center gap-1.5 text-xs text-[#8F98A3]">
                   <CalendarIcon className="w-3.5 h-3.5" />
                   <span>
-                    Created {new Date(viewingNote.created_at).toLocaleDateString(undefined, {
+                    {noteStamp(viewingNote).label}{' '}
+                    {new Date(noteStamp(viewingNote).date).toLocaleDateString(undefined, {
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric'
@@ -429,15 +477,14 @@ const NotesPage = () => {
 
               <div>
                 <label className="block text-xs font-semibold text-[#6C7278] mb-1">
-                  Associated Course
+                  Associated Course (optional)
                 </label>
                 <select
-                  required
                   value={selectedCourseId}
                   onChange={(e) => setSelectedCourseId(e.target.value)}
                   className="w-full p-2.5 border border-neutral-300 rounded-[8px] text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#3399FF]"
                 >
-                  <option value="" disabled>-- Select a Course --</option>
+                  <option value="">General (no course)</option>
                   {courses.map((course) => (
                     <option key={course.id} value={course.id}>
                       {course.name} ({course.course_code})
@@ -470,9 +517,10 @@ const NotesPage = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-[8px] text-xs font-medium text-white bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] cursor-pointer hover:opacity-90 transition shadow-md"
+                  disabled={isSaving}
+                  className="px-4 py-2 rounded-[8px] text-xs font-medium text-white bg-[linear-gradient(109.51deg,_#3399FF_2.27%,_#3864F5_100%)] cursor-pointer hover:opacity-90 transition shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  {activeNote ? 'Save Changes' : 'Save Note'}
+                  {isSaving ? 'Saving...' : activeNote ? 'Save Changes' : 'Save Note'}
                 </button>
               </div>
             </form>
