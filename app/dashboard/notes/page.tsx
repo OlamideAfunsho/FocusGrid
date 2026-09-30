@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   PlusIcon,
   SearchIcon,
@@ -8,11 +8,18 @@ import {
   PencilIcon,
   BookOpenIcon,
   CalendarIcon,
-  XIcon
+  XIcon,
+  BoldIcon,
+  ItalicIcon,
+  Heading2Icon,
+  ListIcon,
+  ListOrderedIcon,
+  CodeIcon
 } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import { createBrowserClient } from '@/lib/supabaseClient';
 import { useSession } from '@clerk/nextjs';
+import MarkdownContent, { stripMarkdown } from '../components/MarkdownContent';
 
 interface CourseOption {
   id: string;
@@ -59,6 +66,57 @@ const NotesPage = () => {
   const [noteTitle, setNoteTitle] = useState('');
   const [selectedCourseId, setSelectedCourseId] = useState('');
   const [noteContent, setNoteContent] = useState('');
+  const [editorTab, setEditorTab] = useState<'write' | 'preview'>('write');
+  const contentRef = useRef<HTMLTextAreaElement>(null);
+
+  // Wrap the selected text, e.g. **bold**
+  const applyWrap = (before: string, after: string = before) => {
+    const field = contentRef.current;
+    if (!field) return;
+
+    const { selectionStart, selectionEnd, value } = field;
+    const selected = value.slice(selectionStart, selectionEnd) || 'text';
+    setNoteContent(value.slice(0, selectionStart) + before + selected + after + value.slice(selectionEnd));
+
+    requestAnimationFrame(() => {
+      field.focus();
+      field.setSelectionRange(selectionStart + before.length, selectionStart + before.length + selected.length);
+    });
+  };
+
+  // Put a marker at the start of each selected line, e.g. bullet or numbered lists
+  const applyLinePrefix = (prefix: string) => {
+    const field = contentRef.current;
+    if (!field) return;
+
+    const { selectionStart, selectionEnd, value } = field;
+    const lineStart = value.lastIndexOf('\n', selectionStart - 1) + 1;
+    const nextBreak = value.indexOf('\n', selectionEnd);
+    const lineEnd = nextBreak === -1 ? value.length : nextBreak;
+
+    const block = value.slice(lineStart, lineEnd) || 'text';
+    const numbered = prefix === '1. ';
+    const updated = block
+      .split('\n')
+      .map((line, index) => `${numbered ? `${index + 1}. ` : prefix}${line}`)
+      .join('\n');
+
+    setNoteContent(value.slice(0, lineStart) + updated + value.slice(lineEnd));
+
+    requestAnimationFrame(() => {
+      field.focus();
+      field.setSelectionRange(lineStart, lineStart + updated.length);
+    });
+  };
+
+  const toolbarButtons = [
+    { label: 'Bold', icon: BoldIcon, action: () => applyWrap('**') },
+    { label: 'Italic', icon: ItalicIcon, action: () => applyWrap('*') },
+    { label: 'Heading', icon: Heading2Icon, action: () => applyLinePrefix('## ') },
+    { label: 'Bullet list', icon: ListIcon, action: () => applyLinePrefix('- ') },
+    { label: 'Numbered list', icon: ListOrderedIcon, action: () => applyLinePrefix('1. ') },
+    { label: 'Code', icon: CodeIcon, action: () => applyWrap('`') },
+  ];
 
   // 1. Fetch Notes and Courses Concurrently
   useEffect(() => {
@@ -99,6 +157,7 @@ const NotesPage = () => {
     setNoteTitle('');
     setSelectedCourseId('');
     setNoteContent('');
+    setEditorTab('write');
     setIsModalOpen(true);
   };
 
@@ -107,6 +166,7 @@ const NotesPage = () => {
     setNoteTitle(note.title);
     setSelectedCourseId(note.course_id ?? '');
     setNoteContent(note.content);
+    setEditorTab('write');
     setIsModalOpen(true);
   };
 
@@ -119,6 +179,12 @@ const NotesPage = () => {
   const handleSaveNote = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!session?.user?.id || isSaving) return;
+
+    // Checked here too, since the textarea is unmounted while the preview tab is open
+    if (!noteTitle.trim() || !noteContent.trim()) {
+      toast.error('Give the note a title and some content');
+      return;
+    }
 
     setIsSaving(true);
 
@@ -337,7 +403,7 @@ const NotesPage = () => {
                   {note.title}
                 </h3>
                 <p className="text-xs text-[#6C7278] line-clamp-4 leading-relaxed mb-4">
-                  {note.content}
+                  {stripMarkdown(note.content)}
                 </p>
               </div>
 
@@ -395,9 +461,7 @@ const NotesPage = () => {
 
               {/* Scrollable Body */}
               <div className="p-6 overflow-y-auto flex-1">
-                <p className="text-sm text-neutral-700 whitespace-pre-wrap leading-relaxed">
-                  {viewingNote.content}
-                </p>
+                <MarkdownContent content={viewingNote.content} />
               </div>
 
               {/* Fixed Footer */}
@@ -494,17 +558,76 @@ const NotesPage = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#6C7278] mb-1">
-                  Content / Lecture Summary
-                </label>
-                <textarea
-                  rows={6}
-                  required
-                  placeholder="Write down class summaries, formulas, or key insights..."
-                  value={noteContent}
-                  onChange={(e) => setNoteContent(e.target.value)}
-                  className="w-full p-2.5 border border-neutral-300 rounded-[8px] text-sm focus:outline-none focus:ring-2 focus:ring-[#3399FF] resize-none"
-                />
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-semibold text-[#6C7278]">
+                    Content / Lecture Summary
+                  </label>
+                  <div className="flex items-center gap-1 p-0.5 bg-neutral-100 rounded-lg">
+                    {(['write', 'preview'] as const).map((tab) => (
+                      <button
+                        key={tab}
+                        type="button"
+                        onClick={() => setEditorTab(tab)}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-semibold capitalize transition cursor-pointer ${
+                          editorTab === tab
+                            ? 'bg-white text-[#3E3A72] shadow-sm'
+                            : 'text-[#6C7278] hover:text-[#3E3A72]'
+                        }`}
+                      >
+                        {tab}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {editorTab === 'write' ? (
+                  <>
+                    <div className="flex items-center flex-wrap gap-1 p-1 bg-neutral-50 border border-neutral-300 border-b-0 rounded-t-[8px]">
+                      {toolbarButtons.map(({ label, icon: Icon, action }) => (
+                        <button
+                          key={label}
+                          type="button"
+                          onClick={action}
+                          title={label}
+                          className="p-1.5 rounded-md text-[#6C7278] hover:bg-neutral-200 hover:text-[#3E3A72] cursor-pointer transition"
+                        >
+                          <Icon className="w-4 h-4" />
+                        </button>
+                      ))}
+                    </div>
+                    <textarea
+                      ref={contentRef}
+                      rows={8}
+                      placeholder="Write down class summaries, formulas, or key insights..."
+                      value={noteContent}
+                      onChange={(e) => setNoteContent(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (!(e.ctrlKey || e.metaKey)) return;
+                        if (e.key === 'b') {
+                          e.preventDefault();
+                          applyWrap('**');
+                        }
+                        if (e.key === 'i') {
+                          e.preventDefault();
+                          applyWrap('*');
+                        }
+                      }}
+                      className="w-full p-2.5 border border-neutral-300 rounded-b-[8px] text-sm focus:outline-none focus:ring-2 focus:ring-[#3399FF] resize-y"
+                    />
+                  </>
+                ) : (
+                  <div className="w-full min-h-[232px] max-h-[320px] overflow-y-auto p-3 bg-neutral-50 border border-neutral-300 rounded-[8px]">
+                    {noteContent.trim() ? (
+                      <MarkdownContent content={noteContent} />
+                    ) : (
+                      <p className="text-xs text-[#8F98A3]">Nothing to preview yet.</p>
+                    )}
+                  </div>
+                )}
+
+                <p className="text-[11px] text-[#8F98A3] mt-1.5">
+                  Formatting: **bold**, *italic*, ## heading, - list, `code`
+                </p>
               </div>
 
               <div className="flex justify-end gap-2 pt-2">
