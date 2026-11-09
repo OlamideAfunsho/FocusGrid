@@ -4,6 +4,7 @@ import arrowIcon from "../public/images/landing_page_images/arrow-right-02.svg";
 import playIcon from "../public/images/landing_page_images/play-icon-02.svg";
 import dashboardImage from "../public/images/landing_page_images/dashboard-image.png";
 import AuthCtaButton from './AuthCtaButton';
+import WatchDemoButton from './WatchDemoButton';
 
 const SubFooter = () => {
   return (
@@ -20,10 +21,7 @@ const SubFooter = () => {
                 >
                     <Image src={arrowIcon} alt="Arrow" className='w-4 h-4 sm:w-6 sm:h-6'/>
                 </AuthCtaButton>
-                <button className='flex items-center gap-2 rounded-[8px] p-3 border-2 border-[#FFFFFF] cursor-pointer hover:gap-3 transition duration-500'>
-                    <Image src={playIcon} alt="Play" className='w-4 h-4 sm:w-6 sm:h-6'/>
-                    <span className='text-[14px] sm:text-[16px] text-[#FFFFFF] font-semibold'>Watch Demo</span>
-                </button>
+                <WatchDemoButton color='#fff' border='2px' shadow='none' />
             </div>
         </div>
         

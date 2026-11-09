@@ -23,7 +23,7 @@ import AuthCtaButton from './AuthCtaButton'
 
 const Navbar = () => {
     const navLinks = [
-        { name: 'Home', href: '/' },
+        { name: 'Home', href: '#hero' },
         { name: 'Features', href: '#features' },
         { name: 'How it works', href: '#how-it-works' },
         { name: 'Testimonials', href: '#testimonials' },

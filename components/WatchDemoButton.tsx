@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { XIcon } from "lucide-react";
 import playIcon from "../public/images/landing_page_images/play-icon.svg";
 
-const WatchDemoButton = () => {
+const WatchDemoButton = ({ color, border, shadow }: { color: string, border: string, shadow: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -26,9 +26,22 @@ const WatchDemoButton = () => {
     <>
       <button
         onClick={() => setIsOpen(true)}
+        style={{ color: color , borderWidth: border, boxShadow: shadow}}
         className="flex gap-2 items-center justify-center text-[#3399ff] p-3 rounded-[8px] cursor-pointer shadow-[0px_17px_29.7px_0px_#D1D8DF]"
       >
-        <Image src={playIcon} alt="play-button-icon" width={24} />
+        {/* <Image src={playIcon} alt="play-button-icon" width={24} /> */}
+        <div 
+          className="w-6 h-6 inline-block bg-[#3399ff]"
+          style={{
+            backgroundColor: color,
+            maskImage: `url(${typeof playIcon === 'string' ? playIcon : playIcon.src})`,
+            WebkitMaskImage: `url(${typeof playIcon === 'string' ? playIcon : playIcon.src})`,
+            maskSize: "contain",
+            WebkitMaskSize: "contain",
+            maskRepeat: "no-repeat",
+            WebkitMaskRepeat: "no-repeat",
+          }}
+        />
         <span className="text-[16px] font-semibold ">Watch Demo</span>
       </button>
 

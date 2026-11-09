@@ -10,7 +10,7 @@ import dashboardImage from '../public/images/landing_page_images/dashboard-image
 const Hero = () => {
   return (
     <>
-      <div className="hero-section bg-[linear-gradient(109.51deg,_#EAF5FF_2.27%,_#F9FAFF_100%)] flex flex-col xl:flex-row mt-10 md:mt-20 pt-20 pb-20 items-center justify-around px-4 sm:px-16 lg:px-32 ">
+      <div id="hero" className="hero-section bg-[linear-gradient(109.51deg,_#EAF5FF_2.27%,_#F9FAFF_100%)] flex flex-col xl:flex-row mt-10 md:mt-20 pt-20 pb-20 items-center justify-around px-4 sm:px-16 lg:px-32 ">
         <div>
           <div className="flex items-center gap-2.5 w-fit mx-auto xl:mx-0 bg-[#FFFFFF] rounded-[30px] p-2.5 mb-6 shadow-[0px_17px_29.7px_0px_#D1D8DF]">
             <span className="bg-[#08BD4D] w-3 h-3 rounded-full"></span>
@@ -34,7 +34,7 @@ const Hero = () => {
             >
               <Image src={arrowRight} alt="arrow-right" width={24} />
             </AuthCtaButton>
-            <WatchDemoButton />
+            <WatchDemoButton color="#3399ff" border="" shadow="" />
           </div>
 
         </div>
